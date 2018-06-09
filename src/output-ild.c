@@ -46,7 +46,7 @@
 #define ILDA_3D_DATA  0
 #define ILDA_2D_DATA  1
 #define ILDA_COLOR_TABLE 2
-#define ILDA_TRUE_COLOR 3
+#define ILDA_true_COLOR 3
 #define ILDA_COLORS_NUM 256
 
 #define POINT_ATTRIB_BLANKED 0x01
@@ -623,7 +623,7 @@ int writeILDATrueColor(FILE * file, LaserFrame * f)
 
   cpoints = frame_point_count(f);
 
-  writeILDAHeader(file, ILDA_TRUE_COLOR, (cpoints * 3) + 4);
+  writeILDAHeader(file, ILDA_true_COLOR, (cpoints * 3) + 4);
 
   cbuffer[0] = (cpoints >> 24) & 0xFF;
   cbuffer[1] = (cpoints >> 16) & 0xFF;
@@ -1006,7 +1006,8 @@ static void OutputILDA(FILE * fdes, int llx, int lly, int urx, int ury, spline_l
   writeILDA(fdes, drawsequence);
 }
 
-int output_ild_writer(FILE * file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, at_spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_ild_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      at_spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
 
 #ifdef _WINDOWS

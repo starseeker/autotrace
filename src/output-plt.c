@@ -39,7 +39,7 @@
 #define WDEVMLMTR 320
 #define HDEVMLMTR 240
 
-#define SCALE (gfloat) 1.0
+#define SCALE (float) 1.0
 
 #define MAKE_COLREF(r,g,b) (((r) & 0x0FF) | (((g) & 0x0FF) << 8) | (((b) & 0x0FF) << 16))
 #define X_FLOAT_TO_UI32(num) ((uint32_t)(num * SCALE))
@@ -91,7 +91,7 @@ static void GetSplinePts(at_real_coord * BezierPts, at_real_coord * Splines, int
      d = P3 - P0 - (b + c)
    */
 
-  gfloat t;
+  float t;
   int count;
   at_real_coord a, b, c, d;
 
@@ -216,7 +216,8 @@ static void OutputPlt(FILE * fdes, int llx, int lly, int urx, int ury, spline_li
 
 //PLT output
 
-int output_plt_writer(FILE * file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, at_spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_plt_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      at_spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
 #ifdef _WINDOWS
   if (file == stdout) {

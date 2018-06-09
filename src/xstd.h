@@ -18,27 +18,27 @@
 #define XMALLOC(new_mem, size)			\
 do						\
   {						\
-    new_mem = (gpointer) malloc (size);	\
+    new_mem = (void *) malloc (size);  \
     assert(new_mem);				\
   } while (0)
 
 #define XCALLOC(new_mem, size)			\
 do						\
   {						\
-    new_mem = (gpointer) calloc (size, 1);	\
+    new_mem = (void *) calloc (size, 1);  \
     assert(new_mem);				\
   } while (0)
 
 #define XREALLOC(old_ptr, size)				\
 do							\
   {							\
-    gpointer new_mem;					\
+    void * new_mem;          \
 							\
     if (old_ptr == NULL)				\
       XMALLOC (new_mem, size);				\
     else						\
       {							\
-        new_mem = (gpointer) realloc (old_ptr, size);	\
+        new_mem = (void *) realloc (old_ptr, size);  \
         assert(new_mem);				\
       }							\
 							\
@@ -50,31 +50,31 @@ do							\
 #define XMALLOC(new_mem, size)					\
 do								\
   {								\
-    (gpointer&)(new_mem) = (gpointer) malloc (size);	\
+    (void *&)(new_mem) = (void *) malloc (size);	\
      assert(new_mem);						\
   } while (0)
 
 #define XCALLOC(new_mem, sizex)					\
 do								\
   {								\
-    (gpointer&)(new_mem) = (void *) calloc (sizex, 1);	\
+    (void *&)(new_mem) = (void *) calloc (sizex, 1);	\
     assert(new_mem);						\
   } while (0)
 
 #define XREALLOC(old_ptr, size)						  \
 do									  \
   {									  \
-    gpointer new_mem;							  \
+    void * new_mem;							  \
 									  \
     if (old_ptr == NULL)						  \
       XMALLOC (new_mem, (size));					  \
     else								  \
       {									  \
-        (gpointer&) new_mem = (gpointer) realloc ((old_ptr), (size)); \
+        (void *&) new_mem = (void *) realloc ((old_ptr), (size)); \
         assert(new_mem);						  \
       }									  \
 									  \
-    (gpointer&)old_ptr = new_mem;					  \
+    (void *&)old_ptr = new_mem;					  \
   } while (0)
 #endif
 

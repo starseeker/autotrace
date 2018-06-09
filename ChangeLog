@@ -93,7 +93,7 @@
 
 	* fit.c: Likewise.
 
-	* image-proc.c: Likewise. Use TRUE and FALSE
+	* image-proc.c: Likewise. Use true and false
 	instead of true and false.
 	
 	* image-proc.h: Likewise.
@@ -158,9 +158,9 @@
 2003-07-04  Masatake YAMATO  <yamato@redhat.com>
 
 	* output-eps.c (output_eps_header): Fix a
-	typo: TRUE -> true, FALSE -> false.
+	typo: true -> true, false -> false.
 	
-	* types.h (_at_coord): Use gushort.
+	* types.h (_at_coord): Use unsigned short.
 	use AT_TYPES_H instead of TYPES_H.
 
 2003-07-04  Masatake YAMATO  <yamato@redhat.com>
@@ -178,9 +178,9 @@
 	* Makefile.am (libautotrace_la_SOURCES): Added private.h.
 
 	* types.h (at_bool): replaced with gooolean.
-	(at_address): replaced with gpointer.
-	(at_real): replaced with gfloat.
-	(at_string): replaced with gchar *.
+	(at_address): replaced with void *.
+	(at_real): replaced with float.
+	(at_string): replaced with char *.
 	
 	* exception.h (struct _at_exception_type): Fix a typo.
 
@@ -226,7 +226,7 @@
 
 	* main.c: use new type at_spline_writer.
 	(output_list_formats): Added const modifiers to list,
-	tmp, suffix and descr.
+	tmp, suffix and description.
 
 	* module.c: image magick related functions are moved to
 	input-magick.c.
@@ -2464,7 +2464,7 @@
 	* main.c (main): Use at_splines_new_full.
 
 	* fit.[hc] (fitted_splines): Put cancel points.
-	If `test_cancel' is given and it returns TRUE,
+	If `test_cancel' is given and it returns true,
 	execution is stopped and the control is returned.
 
 	* types.h (testcancel_func): New type.
@@ -2841,9 +2841,9 @@ o2001-09-18  Martin Weber  <martweb@gmx.net>
 	Applied patches from Martin.
 	Message-ID: <3AA11C68.9B494013@gmx.net>
 
-	* output-emf.c: Replaced TRUE and FALSE by true and false.
+	* output-emf.c: Replaced true and false by true and false.
 
-	* types.h: Remove TRUE and FALSE.
+	* types.h: Remove true and false.
 
 	Applied patches from Martin.
 	Message-ID: <3AA11A4B.BD319064@gmx.net>.
@@ -3182,7 +3182,7 @@ o2001-09-18  Martin Weber  <martweb@gmx.net>
 
 	* output.c(output_list): New function.
 
-	* input.c (input_format_entry): Added descr field.
+	* input.c (input_format_entry): Added description field.
 	(input_list): New function.
 	(input_list_formats): Move to main.
 	

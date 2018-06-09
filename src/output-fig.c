@@ -44,7 +44,7 @@
 #define FIG_YELLOW	6
 #define FIG_WHITE	7
 
-static gfloat bezpnt(gfloat, gfloat, gfloat, gfloat, gfloat);
+static float bezpnt(float, float, float, float, float);
 static void out_fig_splines(FILE *, spline_list_array_type, int, int, int, int, at_exception_type *);
 static int get_fig_colour(at_color, at_exception_type *);
 static void fig_col_init(void);
@@ -124,18 +124,17 @@ static void fig_addtobbox(float x, float y)
 
 /* Convert Bezier Spline */
 
-static gfloat bezpnt(gfloat t, gfloat z1, gfloat z2, gfloat z3, gfloat z4)
-{
-  gfloat temp, t1;
+static float bezpnt(float t, float z1, float z2, float z3, float z4) {
+  float temp, t1;
   /* Determine ordinate on Bezier curve at length "t" on curve */
-  if (t < (gfloat) 0.0) {
-    t = (gfloat) 0.0;
+  if (t < (float) 0.0) {
+    t = (float) 0.0;
   }
-  if (t > (gfloat) 1.0) {
-    t = (gfloat) 1.0;
+  if (t > (float) 1.0) {
+    t = (float) 1.0;
   }
-  t1 = ((gfloat) 1.0 - t);
-  temp = t1 * t1 * t1 * z1 + (gfloat) 3.0 *t * t1 * t1 * z2 + (gfloat) 3.0 *t * t * t1 * z3 + t * t * t * z4;
+  t1 = ((float) 1.0 - t);
+  temp = t1 * t1 * t1 * z1 + (float) 3.0 * t * t1 * t1 * z2 + (float) 3.0 * t * t * t1 * z3 + t * t * t * z4;
   return (temp);
 }
 
@@ -181,13 +180,13 @@ static void out_fig_splines(FILE * file, spline_list_array_type shape, int llx, 
 
 /*	store the spline points in two arrays, control weights in another */
     int *pointx, *pointy;
-    gfloat *contrl;
+    float *contrl;
     int pointcount = 0, is_spline = 0, j;
     int maxlength = SPLINE_LIST_LENGTH(list) * 5 + 1;
 
     XMALLOC(pointx, maxlength * sizeof(int));
     XMALLOC(pointy, maxlength * sizeof(int));
-    XMALLOC(contrl, maxlength * sizeof(gfloat));
+    XMALLOC(contrl, maxlength * sizeof(float));
 
     if (list.clockwise) {
       fig_colour = FIG_WHITE;
@@ -203,31 +202,31 @@ static void out_fig_splines(FILE * file, spline_list_array_type shape, int llx, 
       if (pointcount == 0) {
         pointx[pointcount] = FIG_X(START_POINT(s).x);
         pointy[pointcount] = FIG_Y(START_POINT(s).y);
-        contrl[pointcount] = (gfloat) 0.0;
+        contrl[pointcount] = (float) 0.0;
         fig_addtobbox(START_POINT(s).x, START_POINT(s).y);
         pointcount++;
       }
       /* Apparently START_POINT for one spline section is same as END_POINT
-         for previous section - should gfloatly test for this */
+         for previous section - should floatly test for this */
       if (SPLINE_DEGREE(s) == LINEARTYPE) {
         pointx[pointcount] = FIG_X(END_POINT(s).x);
         pointy[pointcount] = FIG_Y(END_POINT(s).y);
-        contrl[pointcount] = (gfloat) 0.0;
+        contrl[pointcount] = (float) 0.0;
         fig_addtobbox(START_POINT(s).x, START_POINT(s).y);
         pointcount++;
       } else {                  /* Assume Bezier like spline */
 
         /* Convert approximated bezier to interpolated X Spline */
-        gfloat temp;
-        for (temp = (gfloat) 0.2; temp < (gfloat) 0.9; temp += (gfloat) 0.2) {
+        float temp;
+        for (temp = (float) 0.2; temp < (float) 0.9; temp += (float) 0.2) {
           pointx[pointcount] = FIG_X(bezpnt(temp, START_POINT(s).x, CONTROL1(s).x, CONTROL2(s).x, END_POINT(s).x));
           pointy[pointcount] = FIG_Y(bezpnt(temp, START_POINT(s).y, CONTROL1(s).y, CONTROL2(s).y, END_POINT(s).y));
-          contrl[pointcount] = (gfloat) - 1.0;
+          contrl[pointcount] = (float) -1.0;
           pointcount++;
         }
         pointx[pointcount] = FIG_X(END_POINT(s).x);
         pointy[pointcount] = FIG_Y(END_POINT(s).y);
-        contrl[pointcount] = (gfloat) 0.0;
+        contrl[pointcount] = (float) 0.0;
         fig_addtobbox(START_POINT(s).x, START_POINT(s).y);
         fig_addtobbox(CONTROL1(s).x, CONTROL1(s).y);
         fig_addtobbox(CONTROL2(s).x, CONTROL2(s).y);
@@ -347,7 +346,8 @@ static void out_fig_splines(FILE * file, spline_list_array_type shape, int llx, 
   return;
 }
 
-int output_fig_writer(FILE * file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_fig_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   at_exception_type exp = at_exception_new(msg_func, msg_data);
 /*	Output header	*/

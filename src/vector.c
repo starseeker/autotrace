@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <string.h>
 
-static gfloat acos_d(gfloat, at_exception_type * excep);
+static float acos_d(float, at_exception_type *excep);
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -42,15 +42,14 @@ at_real_coord vector_to_point(const vector_type v)
   return coord;
 }
 
-gfloat magnitude(const vector_type v)
-{
-  return (gfloat) sqrt(v.dx * v.dx + v.dy * v.dy + v.dz * v.dz);
+float magnitude(const vector_type v) {
+  return (float) sqrt(v.dx * v.dx + v.dy * v.dy + v.dz * v.dz);
 }
 
 vector_type normalize(const vector_type v)
 {
   vector_type new_v;
-  gfloat m = magnitude(v);
+  float m = magnitude(v);
 
   /* assert (m > 0.0); */
 
@@ -78,12 +77,12 @@ vector_type Vadd(const vector_type v1, const vector_type v2)
   return new_v;
 }
 
-gfloat Vdot(const vector_type v1, const vector_type v2)
+float Vdot(const vector_type v1, const vector_type v2)
 {
   return v1.dx * v2.dx + v1.dy * v2.dy + v1.dz * v2.dz;
 }
 
-vector_type Vmult_scalar(const vector_type v, const gfloat r)
+vector_type Vmult_scalar(const vector_type v, const float r)
 {
   vector_type new_v;
 
@@ -97,7 +96,7 @@ vector_type Vmult_scalar(const vector_type v, const gfloat r)
 /* Given the IN_VECTOR and OUT_VECTOR, return the angle between them in
    degrees, in the range zero to 180.  */
 
-gfloat Vangle(const vector_type in_vector, const vector_type out_vector, at_exception_type * exp)
+float Vangle(const vector_type in_vector, const vector_type out_vector, at_exception_type *exp)
 {
   vector_type v1 = normalize(in_vector);
   vector_type v2 = normalize(out_vector);
@@ -129,8 +128,8 @@ at_coord Vadd_int_point(const at_coord c, const vector_type v)
 {
   at_coord a;
 
-  a.x = (unsigned short)lround((gfloat) c.x + v.dx);
-  a.y = (unsigned short)lround((gfloat) c.y + v.dy);
+  a.x = (unsigned short) lround((float) c.x + v.dx);
+  a.y = (unsigned short) lround((float) c.y + v.dy);
   return a;
 }
 
@@ -138,9 +137,9 @@ vector_type Vabs(const vector_type v)
 {
   vector_type new_v;
 
-  new_v.dx = (gfloat) fabs(v.dx);
-  new_v.dy = (gfloat) fabs(v.dy);
-  new_v.dz = (gfloat) fabs(v.dz);
+  new_v.dx = (float) fabs(v.dx);
+  new_v.dy = (float) fabs(v.dy);
+  new_v.dz = (float) fabs(v.dz);
   return new_v;
 }
 
@@ -157,7 +156,7 @@ at_real_coord Padd(const at_real_coord coord1, const at_real_coord coord2)
   return sum;
 }
 
-at_real_coord Pmult_scalar(const at_real_coord coord, const gfloat r)
+at_real_coord Pmult_scalar(const at_real_coord coord, const float r)
 {
   at_real_coord answer;
 
@@ -185,8 +184,8 @@ vector_type IPsubtract(const at_coord coord1, const at_coord coord2)
 {
   vector_type v;
 
-  v.dx = (gfloat) (coord1.x - coord2.x);
-  v.dy = (gfloat) (coord1.y - coord2.y);
+  v.dx = (float) (coord1.x - coord2.x);
+  v.dy = (float) (coord1.y - coord2.y);
   v.dz = 0.0;
 
   return v;
@@ -222,7 +221,7 @@ at_coord IPmult_scalar(const at_coord c, const int i)
   return a;
 }
 
-at_real_coord IPmult_real(const at_coord c, const gfloat r)
+at_real_coord IPmult_real(const at_coord c, const float r)
 {
   at_real_coord a;
 
@@ -232,17 +231,16 @@ at_real_coord IPmult_real(const at_coord c, const gfloat r)
   return a;
 }
 
-gboolean IPequal(const at_coord c1, const at_coord c2)
+bool IPequal(const at_coord c1, const at_coord c2)
 {
   if ((c1.x == c2.x) && (c1.y == c2.y))
-    return TRUE;
+    return true;
   else
-    return FALSE;
+    return false;
 }
 
-static gfloat acos_d(gfloat v, at_exception_type * excep)
-{
-  gfloat a;
+static float acos_d(float v, at_exception_type *excep) {
+  float a;
 
   if (epsilon_equal(v, 1.0))
     v = 1.0;
@@ -250,11 +248,11 @@ static gfloat acos_d(gfloat v, at_exception_type * excep)
     v = -1.0;
 
   errno = 0;
-  a = (gfloat) acos(v);
+  a = (float) acos(v);
   if (errno == ERANGE || errno == EDOM) {
     at_exception_fatal(excep, strerror(errno));
     return 0.0;
   }
 
-  return a * (gfloat) 180.0 / (gfloat) M_PI;
+  return a * (float) 180.0 / (float) M_PI;
 }

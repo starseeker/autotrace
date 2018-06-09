@@ -21,7 +21,7 @@ struct etyp {
   int t00, t11, t01, t01s;
 };
 
-static gboolean get_edge(bitmap_type, int y, int x, struct etyp *t);
+static bool get_edge(bitmap_type, int y, int x, struct etyp *t);
 static void check(int v1, int v2, int v3, struct etyp *t);
 #endif
 
@@ -31,7 +31,7 @@ static void check(int v1, int v2, int v3, struct etyp *t);
    distance infinity.  Then compute the gray-weighted distance from
    every non-target point to the nearest target point. */
 
-at_distance_map new_distance_map(at_bitmap * bitmap, unsigned char target_value, gboolean padded, at_exception_type * exp)
+at_distance_map new_distance_map(at_bitmap *bitmap, unsigned char target_value, bool padded, at_exception_type *exp)
 {
   signed x, y;
   float d, min;
@@ -178,13 +178,13 @@ void free_distance_map(at_distance_map * dist)
 
   if (dist->d != NULL) {
     for (y = 0; y < h; y++)
-      free((gpointer *) dist->d[y]);
-    free((gpointer *) dist->d);
+      free((void **) dist->d[y]);
+    free((void **) dist->d);
   }
   if (dist->weight != NULL) {
     for (y = 0; y < h; y++)
-      free((gpointer *) dist->weight[y]);
-    free((gpointer *) dist->weight);
+      free((void **) dist->weight[y]);
+    free((void **) dist->weight);
   }
 }
 
@@ -315,7 +315,7 @@ void binarize(at_bitmap * bitmap)
 at_bitmap ip_thin(bitmap_type input_b)
 {
   unsigned y, x, i;
-  gboolean k, again;
+  bool k, again;
   struct etyp t;
   unsigned w = AT_BITMAP_WIDTH(input_b);
   unsigned h = AT_BITMAP_HEIGHT(input_b);
@@ -335,9 +335,9 @@ at_bitmap ip_thin(bitmap_type input_b)
   for (i = 0; i < num_bytes; i++)
     b.bitmap[i] = (b.bitmap[i] == BLACK ? 1 : 0);
 
-  again = TRUE;
+  again = true;
   while (again) {
-    again = FALSE;
+    again = false;
 
     for (y = 1; y < h - 1; y++) {
       for (x = 1; x < w - 1; x++) {
@@ -360,7 +360,7 @@ at_bitmap ip_thin(bitmap_type input_b)
         if (t.t01)
           *AT_BITMAP_PIXEL(b, y, x) |= 4;
         *AT_BITMAP_PIXEL(b, y, x) |= 2;
-        again = TRUE;
+        again = true;
       }
     }
 
@@ -386,7 +386,7 @@ at_bitmap ip_thin(bitmap_type input_b)
           continue;
 
         *AT_BITMAP_PIXEL(b, y, x) |= 02;
-        again = TRUE;
+        again = true;
       }
     }
 
@@ -460,7 +460,7 @@ at_bitmap ip_thin(bitmap_type input_b)
   return b;
 }
 
-gboolean get_edge(bitmap_type b, int y, int x, struct etyp * t)
+bool get_edge(bitmap_type b, int y, int x, struct etyp * t)
 {
   t->t00 = 0;
   t->t01 = 0;

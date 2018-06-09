@@ -41,7 +41,7 @@ typedef struct {
   int lly;
   int urx;
   int ury;
-  gfloat dpi;
+  float dpi;
 } BboxT;
 
 BboxT cbox;
@@ -77,25 +77,24 @@ static const char *colorstring(int r, int g, int b)
 /*===========================================================================
  Convert Bezier Spline
 ===========================================================================*/
-static gfloat bezpnt(gfloat t, gfloat z1, gfloat z2, gfloat z3, gfloat z4)
-{
-  gfloat temp, t1;
+static float bezpnt(float t, float z1, float z2, float z3, float z4) {
+  float temp, t1;
   /* Determine ordinate on Bezier curve at length "t" on curve */
-  if (t < (gfloat) 0.0) {
-    t = (gfloat) 0.0;
+  if (t < (float) 0.0) {
+    t = (float) 0.0;
   }
-  if (t > (gfloat) 1.0) {
-    t = (gfloat) 1.0;
+  if (t > (float) 1.0) {
+    t = (float) 1.0;
   }
-  t1 = ((gfloat) 1.0 - t);
-  temp = t1 * t1 * t1 * z1 + (gfloat) 3.0 *t * t1 * t1 * z2 + (gfloat) 3.0 *t * t * t1 * z3 + t * t * t * z4;
+  t1 = ((float) 1.0 - t);
+  temp = t1 * t1 * t1 * z1 + (float) 3.0 * t * t1 * t1 * z2 + (float) 3.0 * t * t * t1 * z3 + t * t * t * z4;
   return (temp);
 }
 
 /*===========================================================================
   Print a point
 ===========================================================================*/
-static void print_coord(FILE * f, gfloat x, gfloat y)
+static void print_coord(FILE *f, float x, float y)
 {
   fprintf(f, "  <Point %.2f %.2f>\n", x * 72.0 / cbox.dpi, (cbox.ury - y + 1) * 72.0 / cbox.dpi);
 }
@@ -103,7 +102,8 @@ static void print_coord(FILE * f, gfloat x, gfloat y)
 /*===========================================================================
   Main conversion routine
 ===========================================================================*/
-int output_mif_writer(FILE * ps_file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_mif_writer(FILE *ps_file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   unsigned this_list;
   int i;
@@ -115,9 +115,9 @@ int output_mif_writer(FILE * ps_file, gchar * name, int llx, int lly, int urx, i
   cbox.lly = lly;
   cbox.urx = urx;
   cbox.ury = ury;
-  cbox.dpi = (gfloat) opts->dpi;
+  cbox.dpi = (float) opts->dpi;
 
-  fprintf(ps_file, "<MIFFile 4.00> #%s\n<Units Upt>\n<ColorCatalog\n", at_version(TRUE));
+  fprintf(ps_file, "<MIFFile 4.00> #%s\n<Units Upt>\n<ColorCatalog\n", at_version(true));
 
   for (this_list = 0; this_list < SPLINE_LIST_ARRAY_LENGTH(shape); this_list++) {
     spline_list_type list = SPLINE_LIST_ARRAY_ELT(shape, this_list);
@@ -153,7 +153,7 @@ int output_mif_writer(FILE * ps_file, gchar * name, int llx, int lly, int urx, i
 
   for (this_list = 0; this_list < SPLINE_LIST_ARRAY_LENGTH(shape); this_list++) {
     unsigned this_spline;
-    gboolean smooth;
+    bool smooth;
 
     spline_list_type list = SPLINE_LIST_ARRAY_ELT(shape, this_list);
     spline_type first = SPLINE_LIST_ELT(list, 0);
@@ -166,17 +166,17 @@ int output_mif_writer(FILE * ps_file, gchar * name, int llx, int lly, int urx, i
     fprintf(ps_file, "  <ObColor `%s'>\n", col_tbl[i].tag);
 
     print_coord(ps_file, START_POINT(first).x, START_POINT(first).y);
-    smooth = FALSE;
+    smooth = false;
     for (this_spline = 0; this_spline < SPLINE_LIST_LENGTH(list); this_spline++) {
       spline_type s = SPLINE_LIST_ELT(list, this_spline);
 
       if (SPLINE_DEGREE(s) == LINEARTYPE) {
         print_coord(ps_file, END_POINT(s).x, END_POINT(s).y);
       } else {
-        gfloat temp;
-        gfloat dt = (gfloat) (1.0 / 7.0);
-        /*smooth = TRUE; */
-        for (temp = dt; fabs(temp - (gfloat) 1.0) > dt; temp += dt) {
+        float temp;
+        float dt = (float) (1.0 / 7.0);
+        /*smooth = true; */
+        for (temp = dt; fabs(temp - (float) 1.0) > dt; temp += dt) {
           print_coord(ps_file, bezpnt(temp, START_POINT(s).x, CONTROL1(s).x, CONTROL2(s).x, END_POINT(s).x), bezpnt(temp, START_POINT(s).y, CONTROL1(s).y, CONTROL2(s).y, END_POINT(s).y));
         }
       }

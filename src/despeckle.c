@@ -454,11 +454,11 @@ static void ignore( /* in */ int x,
  *   24 bit pixbuf and its mask (used to prevent backtracking)
  *
  * Returns:
- *   TRUE  - feature was recolored, thus coalesced
- *   FALSE - feature wasn't recolored
+ *   true  - feature was recolored, thus coalesced
+ *   false - feature wasn't recolored
  */
 
-static gboolean recolor( /* in */ double adaptive_tightness,
+static bool recolor( /* in */ double adaptive_tightness,
                         /* in */ int x,
                         /* in */ int y,
                         /* in */ int width,
@@ -489,11 +489,11 @@ static gboolean recolor( /* in */ double adaptive_tightness,
     else {
       fill(to_index, x, y, width, height, bitmap, mask);
 
-      return TRUE;
+      return true;
     }
   }
 
-  return FALSE;
+  return false;
 }
 
 /* Recolor - conditionally change a feature's color to the closest color of all
@@ -510,11 +510,11 @@ static gboolean recolor( /* in */ double adaptive_tightness,
  *   8 bit pixbuf and its mask (used to prevent backtracking)
  *
  * Returns:
- *   TRUE  - feature was recolored, thus coalesced
- *   FALSE - feature wasn't recolored
+ *   true  - feature was recolored, thus coalesced
+ *   false - feature wasn't recolored
  */
 
-static gboolean recolor_8( /* in */ double adaptive_tightness,
+static bool recolor_8( /* in */ double adaptive_tightness,
                           /* in */ int x,
                           /* in */ int y,
                           /* in */ int width,
@@ -544,11 +544,11 @@ static gboolean recolor_8( /* in */ double adaptive_tightness,
     else {
       fill_8(to_index, x, y, width, height, bitmap, mask);
 
-      return TRUE;
+      return true;
     }
   }
 
-  return FALSE;
+  return false;
 }
 
 /* Despeckle Iteration - Despeckle all regions smaller than cur_size pixels
@@ -676,8 +676,8 @@ static void despeckle_iteration_8( /* in */ int level,
 
 void despeckle( /* in/out */ at_bitmap * bitmap,
                /* in */ int level,
-               /* in */ gfloat tightness,
-               /* in */ gfloat noise_removal,
+    /* in */ float tightness,
+    /* in */ float noise_removal,
                /* exception handling */ at_exception_type * excep)
 {
   int i, planes, max_level;

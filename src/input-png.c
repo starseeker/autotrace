@@ -39,7 +39,7 @@ static png_bytep *read_png(png_structp png_ptr, png_infop info_ptr, at_input_opt
 #	define png_jmpbuf(png_ptr) (png_ptr)->jmpbuf
 #endif
 
-static void handle_warning(png_structp png, const gchar * message)
+static void handle_warning(png_structp png, const char *message)
 {
   LOG("PNG warning: %s", message);
   at_exception_warning((at_exception_type *) png_get_error_ptr(png), message);
@@ -47,7 +47,7 @@ static void handle_warning(png_structp png, const gchar * message)
      "PNG warning"); */
 }
 
-static void handle_error(png_structp png, const gchar * message)
+static void handle_error(png_structp png, const char *message)
 {
   LOG("PNG error: %s", message);
   at_exception_fatal((at_exception_type *) png_get_error_ptr(png), message);
@@ -120,7 +120,8 @@ cleanup:
   return result;
 }
 
-at_bitmap input_png_reader(gchar * filename, at_input_opts_type * opts, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+at_bitmap
+input_png_reader(char *filename, at_input_opts_type *opts, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   FILE *stream;
   at_bitmap image = at_bitmap_init(0, 0, 0, 1);

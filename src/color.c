@@ -25,27 +25,28 @@
 #include "intl.h"
 #include "color.h"
 #include "exception.h"
+#include "glibReplacement.h"
 
 #include <string.h>
+#include <malloc.h>
 
 /* TODO:
    Use gmemcache */
 
-static unsigned int hctoi(char c, GError ** err);
+static unsigned int hctoi(char c, struct GError **err);
 
 at_color *at_color_new(unsigned char r, unsigned char g, unsigned char b)
 {
   at_color *color;
-  color = g_new(at_color, 1);
+  color = malloc(sizeof(at_color));
   color->r = r;
   color->g = g;
   color->b = b;
   return color;
 }
 
-at_color *at_color_parse(const gchar * string, GError ** err)
-{
-  GError *local_err = NULL;
+at_color *at_color_parse(const char *string, struct GError **err) {
+  struct GError *local_err = NULL;
   unsigned char c[6];
   int i;
 
@@ -54,14 +55,16 @@ at_color *at_color_parse(const gchar * string, GError ** err)
   else if (string[0] == '\0')
     return NULL;
   else if (strlen(string) != 6) {
-    g_set_error(err, AT_ERROR, AT_ERROR_WRONG_COLOR_STRING, _("color string is too short: %s"), string);
+    printf("color string is too short: %s", string);
     return NULL;
   }
 
   for (i = 0; i < 6; i++) {
     c[i] = hctoi(string[i], &local_err);
     if (local_err != NULL) {
-      g_propagate_error(err, local_err);
+      if (err != NULL) {
+        *err = local_err;
+      }
       return NULL;
     }
   }
@@ -75,12 +78,12 @@ at_color *at_color_copy(const at_color * original)
   return at_color_new(original->r, original->g, original->b);
 }
 
-gboolean at_color_equal(const at_color * c1, const at_color * c2)
+bool at_color_equal(const at_color *c1, const at_color *c2)
 {
   if (c1 == c2 || ((c1->r == c2->r) && (c1->g == c2->g) && (c1->b == c2->b)))
-    return TRUE;
+    return true;
   else
-    return FALSE;
+    return false;
 }
 
 void at_color_set(at_color * c, unsigned char r, unsigned char g, unsigned char b)
@@ -98,10 +101,10 @@ unsigned char at_color_luminance(const at_color * color)
 
 void at_color_free(at_color * color)
 {
-  g_free(color);
+  free(color);
 }
 
-static unsigned int hctoi(char c, GError ** err)
+static unsigned int hctoi(char c, struct GError **err)
 {
   if (c == '0')
     return (0);
@@ -148,7 +151,7 @@ static unsigned int hctoi(char c, GError ** err)
   else if (c == 'F')
     return (15);
   else {
-    g_set_error(err, AT_ERROR, AT_ERROR_WRONG_COLOR_STRING, _("wrong char in color string: %c"), c);
+    printf("wrong char in color string: %c", c);
     return (unsigned int)-1;
   }
 }

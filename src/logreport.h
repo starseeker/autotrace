@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "types.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
 #ifdef _EXPORTING
 #define DECLSPEC __declspec(dllexport)
@@ -16,7 +17,7 @@
 #endif
 
 /* Whether to write a log */
-extern gboolean logging;
+extern bool logging;
 
 #define LOG(...)								\
   do { if (logging) fprintf (stdout, __VA_ARGS__); } while (0)

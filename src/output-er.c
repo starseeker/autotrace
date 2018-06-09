@@ -27,20 +27,18 @@
 #include "xstd.h"
 #include "private.h"
 #include <string.h>
-#include <glib.h>
 
 #define NUM_CORRESP_POINTS 4
 
 /* This should be called before the others in this file.  It opens the
    output file and writes some preliminary boilerplate. */
 
-static int output_er_header(FILE * er_file, gchar * name, int llx, int lly, int urx, int ury)
-{
-  gchar *time;
+static int output_er_header(FILE *er_file, char *name, int llx, int lly, int urx, int ury) {
+  char *time;
 
   fprintf(er_file, "#Elastic Reality Shape File\n\n#Date: %s\n\n", time = at_time_string());
 
-  g_free(time);
+  free(time);
 
   fprintf(er_file, "ImageSize = {\n\tWidth = %d\n\tHeight = %d\n}\n\n", urx - llx, ury - lly);
 
@@ -128,7 +126,7 @@ static void out_splines(FILE * er_file, spline_list_array_type shape, unsigned w
     fprintf(er_file, "\t\t}\n\n\t}\n\n");
 
     if (shape.centerline && shape.preserve_width) {
-      gfloat w = (gfloat) 1.0 / (shape.width_weight_factor);
+      float w = (float) 1.0 / (shape.width_weight_factor);
 
       fprintf(er_file, "\tWeightKey = {\n");
       fprintf(er_file, "\t\tFrame = 1\n");
@@ -182,7 +180,8 @@ static void out_splines(FILE * er_file, spline_list_array_type shape, unsigned w
   }
 }
 
-int output_er_writer(FILE * file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_er_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                     spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   int result;
   unsigned width, height;

@@ -12,9 +12,9 @@
 typedef struct {
   at_coord *data;
   unsigned length;
-  gboolean clockwise;
+  bool clockwise;
   at_color color;
-  gboolean open;
+  bool open;
 } pixel_outline_type;
 
 /* The Nth coordinate in the list.  */
@@ -47,10 +47,14 @@ typedef struct {
 #define O_LIST_LENGTH(p_o_l) ((p_o_l).length)
 
 /* Find all pixels on the outline in the character C.  */
-extern pixel_outline_list_type find_outline_pixels(at_bitmap * bitmap, at_color * bg_color, at_progress_func notify_progress, gpointer progress_data, at_testcancel_func test_cancel, gpointer testcancel_data, at_exception_type * exp);
+extern pixel_outline_list_type
+find_outline_pixels(at_bitmap *bitmap, at_color *bg_color, at_progress_func notify_progress, void *progress_data,
+                    at_testcancel_func test_cancel, void *testcancel_data, at_exception_type *exp);
 
 /* Find all pixels on the center line of the character C.  */
-extern pixel_outline_list_type find_centerline_pixels(at_bitmap * bitmap, at_color bg_color, at_progress_func notify_progress, gpointer progress_data, at_testcancel_func test_cancel, gpointer testcancel_data, at_exception_type * exp);
+extern pixel_outline_list_type
+find_centerline_pixels(at_bitmap *bitmap, at_color bg_color, at_progress_func notify_progress, void *progress_data,
+                       at_testcancel_func test_cancel, void *testcancel_data, at_exception_type *exp);
 
 /* Free the memory in the list.  */
 extern void free_pixel_outline_list(pixel_outline_list_type *);

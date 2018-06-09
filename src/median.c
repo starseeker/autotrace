@@ -475,7 +475,7 @@ static int find_nearby_colors(QuantizeObj * quantobj, int minR, int minG, int mi
   int minmaxdist, min_dist = 0, max_dist, tdist;
   int mindist[MAXNUMCOLORS];    /* min distance to colormap entry i */
 
-  /* Compute TRUE coordinates of update box's upper corner and center.
+  /* Compute true coordinates of update box's upper corner and center.
    * Actually we compute the coordinates of the center of the upper-corner
    * histogram cell, which are the upper bounds of the volume we care about.
    * Note that since ">>" rounds down, the "center" values may be closer to
@@ -682,7 +682,7 @@ static void fill_inverse_cmap_rgb(QuantizeObj * quantobj, Histogram histogram, i
   G >>= BOX_G_LOG;
   B >>= BOX_B_LOG;
 
-  /* Compute TRUE coordinates of update box's origin corner.
+  /* Compute true coordinates of update box's origin corner.
    * Actually we compute the coordinates of the center of the corner
    * histogram cell, which are the lower bounds of the volume we care about.
    */

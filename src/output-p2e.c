@@ -78,7 +78,8 @@
 /* This should be called before the others in this file.  It opens the
    output file `OUTPUT_NAME.ps', and writes some preliminary boilerplate. */
 
-static int output_p2e_header(FILE * ps_file, gchar * name, int llx, int lly, int urx, int ury, spline_list_array_type shape)
+static int
+output_p2e_header(FILE *ps_file, char *name, int llx, int lly, int urx, int ury, spline_list_array_type shape)
 {
   unsigned this_list, with_curves = 1;
 
@@ -190,7 +191,8 @@ static void out_splines(FILE * ps_file, spline_list_array_type shape)
     OUT_LINE((shape.centerline || list.open) ? "stroke" : "fill");
 }
 
-int output_p2e_writer(FILE * ps_file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_p2e_writer(FILE *ps_file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   int result;
 

@@ -1,12 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
 
-include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
-
-option(BUILD_LIBS_LOCAL "This will pull down any libraries needed and build locally" off)
-
-include(FindPkgConfig)
-pkg_check_modules(GLIB glib-2.0 REQUIRED)
-
 find_package(ImageMagick COMPONENTS MagickCore)
 find_package(PNG)
 # TODO CHECK for SWF
@@ -22,8 +15,8 @@ add_library(autotraceLib
         src/color.c
         src/autotrace.c
         src/despeckle.c
-        src/output.c
-        src/input.c
+        src/output.cpp
+        src/input.cpp
         src/pxl-outline.c
         src/median.c
         src/thin-image.c
@@ -58,16 +51,18 @@ add_library(autotraceLib
         $<$<BOOL:PNG_FOUND>:src/input-png.c>
 
         $<$<BOOL:ImageMagick_FOUND>:src/input-magick.c>
+        src/GError.h src/callbacks.h src/glibReplacement.h)
+set_target_properties(autotraceLib PROPERTIES
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO
         )
-
 target_include_directories(autotraceLib PUBLIC
         ${CMAKE_SOURCE_DIR}
         src
-        ${GLIB_INCLUDE_DIRS}
         ${ImageMagick_INCLUDE_DIRS}
         ${PNG_INCLUDE_DIRS})
 target_link_libraries(autotraceLib PUBLIC
-        ${GLIB_LIBRARIES}
         ${ImageMagick_LIBRARIES}
         ${PNG_LIBRARIES})
 target_compile_definitions(autotraceLib

@@ -31,7 +31,8 @@
 #include <sys/types.h>          /* Needed for correct interpretation of magick/api.h */
 #include <magick/api.h>
 
-static at_bitmap input_magick_reader(gchar * filename, at_input_opts_type * opts, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+static at_bitmap
+input_magick_reader(char *filename, at_input_opts_type *opts, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   Image *image = NULL;
   ImageInfo *image_info;
@@ -97,7 +98,7 @@ int install_input_magick_readers(void)
 
   while (info) {
     if (info->name && info->description)
-      at_input_add_handler_full(info->name, info->description, input_magick_reader, 0, info->name, NULL);
+      at_input_add_handler_full(info->name, info->description, input_magick_reader);
     info = info->next;
   }
   return 0;

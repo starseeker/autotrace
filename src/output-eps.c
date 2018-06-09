@@ -30,7 +30,6 @@
 #include "private.h"
 #include <string.h>
 #include <math.h>
-#include <glib.h>
 
 /* Output macros.  */
 
@@ -43,7 +42,7 @@
   fprintf (ps_file, __VA_ARGS__)
 
 /* These macros just output their arguments.  */
-#define OUT_REAL(r)	fprintf (ps_file, r == (lround (r = lround((gfloat)6.0*r)/(gfloat)6.0))				\
+#define OUT_REAL(r)  fprintf (ps_file, r == (lround (r = lround((float)6.0*r)/(float)6.0))        \
                                   ? "%.0f " : "%.3f ", r)
 
 /* For a PostScript command with two real arguments, e.g., lineto.  OP
@@ -77,19 +76,18 @@
 /* This should be called before the others in this file.  It opens the
    output file `OUTPUT_NAME.ps', and writes some preliminary boilerplate. */
 
-static int output_eps_header(FILE * ps_file, gchar * name, int llx, int lly, int urx, int ury)
-{
-  gchar *time;
+static int output_eps_header(FILE *ps_file, char *name, int llx, int lly, int urx, int ury) {
+  char *time;
 
   OUT_LINE("%!PS-Adobe-3.0 EPSF-3.0");
-  OUT("%%%%Creator: Adobe Illustrator by %s\n", at_version(TRUE));
+  OUT("%%%%Creator: Adobe Illustrator by %s\n", at_version(true));
   OUT("%%%%Title: %s\n", name);
   OUT("%%%%CreationDate: %s\n", time = at_time_string());
   OUT("%%%%BoundingBox: %d %d %d %d\n", llx, lly, urx, ury);
   OUT_LINE("%%DocumentData: Clean7Bit");
   OUT_LINE("%%EndComments");
 
-  g_free(time);
+  free(time);
   /* Prolog to define Illustrator commands.
    *
    * The s and S commands are not used at the moment and could be
@@ -172,7 +170,8 @@ static void out_splines(FILE * ps_file, spline_list_array_type shape)
     OUT_LINE("*U");
 }
 
-int output_eps_writer(FILE * ps_file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_eps_writer(FILE *ps_file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   int result;
 

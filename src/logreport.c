@@ -6,4 +6,4 @@
 
 #include "logreport.h"
 
-gboolean logging = FALSE;
+bool logging = false;

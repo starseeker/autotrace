@@ -30,37 +30,34 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 /* Return a fresh copy of SOURCE[START..LIMIT], or NULL if LIMIT<START.
    If LIMIT>strlen(START), it is reassigned. */
-static gchar *substring(gchar * source, const unsigned start, const unsigned limit);
+static char *substring(char *source, const unsigned start, const unsigned limit);
 
 /* Return a fresh copy of S1 followed by S2, et al.  */
-static gchar *concat3(gchar *, gchar *, gchar *);
+static char *concat3(char *, char *, char *);
 
-gchar *find_suffix(gchar * name)
-{
-  gchar *dot_pos = strrchr(name, '.');
+char *find_suffix(char *name) {
+  char *dot_pos = strrchr(name, '.');
 #ifdef WIN32
-  gchar *slash_pos = strrchr(name, '\\');
+  char *slash_pos = strrchr(name, '\\');
 #else
-  gchar *slash_pos = strrchr(name, '/');
+  char *slash_pos = strrchr(name, '/');
 #endif
 
   /* If the name is `foo' or `/foo.bar/baz', we have no extension.  */
   return dot_pos == NULL || dot_pos < slash_pos ? NULL : dot_pos + 1;
 }
 
-gchar *extend_filename(gchar * name, gchar * default_suffix)
-{
-  gchar *new_s;
-  gchar *suffix = find_suffix(name);
+char *extend_filename(char *name, char *default_suffix) {
+  char *new_s;
+  char *suffix = find_suffix(name);
 
   new_s = suffix == NULL ? concat3(name, ".", default_suffix) : name;
   return new_s;
 }
 
-gchar *make_suffix(gchar * s, gchar * new_suffix)
-{
-  gchar *new_s;
-  gchar *old_suffix = find_suffix(s);
+char *make_suffix(char *s, char *new_suffix) {
+  char *new_s;
+  char *old_suffix = find_suffix(s);
 
   if (old_suffix == NULL)
     new_s = concat3(s, ".", new_suffix);
@@ -75,17 +72,15 @@ gchar *make_suffix(gchar * s, gchar * new_suffix)
   return new_s;
 }
 
-gchar *remove_suffix(gchar * s)
-{
-  gchar *suffix = find_suffix(s);
+char *remove_suffix(char *s) {
+  char *suffix = find_suffix(s);
 
   return suffix == NULL ? s : suffix - 2 - s < 0 ? NULL : substring(s, 0, (unsigned)(suffix - 2 - s));
 }
 
 /* From substring.c */
-static gchar *substring(gchar * source, const unsigned start, const unsigned limit)
-{
-  gchar *result;
+static char *substring(char *source, const unsigned start, const unsigned limit) {
+  char *result;
   unsigned this_char;
   size_t length = strlen(source);
   size_t lim = limit;
@@ -109,9 +104,8 @@ static gchar *substring(gchar * source, const unsigned start, const unsigned lim
   return result;
 }
 
-static gchar *concat3(gchar * s1, gchar * s2, gchar * s3)
-{
-  gchar *answer;
+static char *concat3(char *s1, char *s2, char *s3) {
+  char *answer;
   XMALLOC(answer, strlen(s1) + strlen(s2) + strlen(s3) + 1);
   strcpy(answer, s1);
   strcat(answer, s2);

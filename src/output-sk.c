@@ -33,7 +33,7 @@ static void out_splines(FILE * file, spline_list_array_type shape)
     unsigned this_spline;
     spline_type first;
     /* Whether to fill or stroke */
-    gboolean stroke;
+    bool stroke;
 
     list = SPLINE_LIST_ARRAY_ELT(shape, this_list);
     first = SPLINE_LIST_ELT(list, 0);
@@ -67,7 +67,8 @@ static void out_splines(FILE * file, spline_list_array_type shape)
   }
 }
 
-int output_sk_writer(FILE * file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_sk_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                     spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   fputs("##Sketch 1 0\n", file);
   fputs("document()\n", file);

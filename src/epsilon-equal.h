@@ -3,6 +3,7 @@
 #ifndef EPSILON_EQUAL_H
 #define EPSILON_EQUAL_H
 
+#include <stdbool.h>
 #include "types.h"
 
 /* Says whether V1 and V2 are within REAL_EPSILON of each other.
@@ -11,7 +12,7 @@
    here is smaller than can be represented in either a `fix_word' or a
    `scaled_num', so more precision than this will be lost when we
    output, anyway.  */
-extern gboolean epsilon_equal(gfloat v1, gfloat v2);
+extern bool epsilon_equal(float v1, float v2);
 #define REAL_EPSILON 0.00001
 
 #endif /* not EPSILON_EQUAL_H */

@@ -36,7 +36,7 @@
 
 /* endianess independent IO functions */
 
-static gboolean write16(FILE * fdes, uint16_t data)
+static bool write16(FILE *fdes, uint16_t data)
 {
   size_t count = 0;
   uint8_t outch;
@@ -47,19 +47,19 @@ static gboolean write16(FILE * fdes, uint16_t data)
   outch = (uint8_t) (data & 0x0FF);
   count += fwrite(&outch, 1, 1, fdes);
 
-  return (count == sizeof(uint16_t)) ? TRUE : FALSE;
+  return (count == sizeof(uint16_t)) ? true : false;
 }
 
-static gboolean write8(FILE * fdes, uint8_t data)
+static bool write8(FILE *fdes, uint8_t data)
 {
   size_t count = 0;
 
   count = fwrite(&data, 1, 1, fdes);
 
-  return (count == sizeof(uint8_t)) ? TRUE : FALSE;
+  return (count == sizeof(uint8_t)) ? true : false;
 }
 
-static gboolean output_beginmetafilename(FILE * fdes, const char *string)
+static bool output_beginmetafilename(FILE *fdes, const char *string)
 {
   size_t len = strlen(string);
 
@@ -80,10 +80,10 @@ static gboolean output_beginmetafilename(FILE * fdes, const char *string)
   if (len % 2 == 0)
     write8(fdes, 0);
 
-  return TRUE;
+  return true;
 }
 
-static gboolean output_beginpicture(FILE * fdes, const char *string)
+static bool output_beginpicture(FILE *fdes, const char *string)
 {
   int len = strlen(string);
 
@@ -104,10 +104,10 @@ static gboolean output_beginpicture(FILE * fdes, const char *string)
   if (len % 2 == 0)
     write8(fdes, 0);
 
-  return TRUE;
+  return true;
 }
 
-static gboolean output_metafiledescription(FILE * fdes, const char *string)
+static bool output_metafiledescription(FILE *fdes, const char *string)
 {
   int len = strlen(string);
 
@@ -128,14 +128,15 @@ static gboolean output_metafiledescription(FILE * fdes, const char *string)
   if (len % 2 == 0)
     write8(fdes, 0);
 
-  return TRUE;
+  return true;
 }
 
-int output_cgm_writer(FILE * cgm_file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_cgm_writer(FILE *cgm_file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   unsigned this_list;
   char *des;
-  const char *version_string = at_version(TRUE);
+  const char *version_string = at_version(true);
 
   output_beginmetafilename(cgm_file, name);
 
