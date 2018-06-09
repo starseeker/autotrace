@@ -48,9 +48,9 @@ add_library(autotraceLib
         src/output-plt.c
         src/output-ild.c
 
-        $<$<BOOL:PNG_FOUND>:src/input-png.c>
+        $<$<BOOL:${PNG_FOUND}>:src/input-png.c>
 
-        $<$<BOOL:ImageMagick_FOUND>:src/input-magick.c>
+        $<$<BOOL:${ImageMagick_FOUND}>:src/input-magick.c>
         src/GError.h src/callbacks.h src/glibReplacement.h)
 set_target_properties(autotraceLib PROPERTIES
         CXX_STANDARD 11
@@ -67,8 +67,8 @@ target_link_libraries(autotraceLib PUBLIC
         ${PNG_LIBRARIES})
 target_compile_definitions(autotraceLib
         PRIVATE
-        $<$<BOOL:PNG_FOUND>:HAVE_LIBPNG ${PNG_DEFINITIONS}>
-        $<$<BOOL:ImageMagick_FOUND>:HAVE_MAGICK>
+        $<$<BOOL:${PNG_FOUND}>:HAVE_LIBPNG ${PNG_DEFINITIONS}>
+        $<$<BOOL:${ImageMagick_FOUND}>:HAVE_MAGICK>
         PUBLIC
         #  TODO use cmake version
         AUTOTRACE_VERSION="1.0"
