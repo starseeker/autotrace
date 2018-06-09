@@ -152,11 +152,3 @@ static unsigned int hctoi(char c, GError ** err)
     return (unsigned int)-1;
   }
 }
-
-GType at_color_get_type(void)
-{
-  static GType our_type = 0;
-  if (our_type == 0)
-    our_type = g_boxed_type_register_static("AtColor", (GBoxedCopyFunc) at_color_copy, (GBoxedFreeFunc) at_color_free);
-  return our_type;
-}

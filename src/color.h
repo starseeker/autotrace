@@ -41,6 +41,5 @@ unsigned char at_color_luminance(const at_color * color);
 void at_color_free(at_color * color);
 
 GType at_color_get_type(void);
-#define AT_TYPE_COLOR (at_color_get_type ())
 
 #endif /* not AT_COLOR_H */
