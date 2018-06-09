@@ -151,9 +151,9 @@ read_png(png_structp png_ptr, png_infop info_ptr, at_input_opts_type * opts)
 
 	png_set_strip_16(png_ptr);
 	png_set_packing(png_ptr);
-	if ((png_ptr->bit_depth < 8) ||
-	    (png_ptr->color_type == PNG_COLOR_TYPE_PALETTE) ||
-	    (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)))
+  if ((png_get_bit_depth(png_ptr, info_ptr) < 8) ||
+      (png_get_color_type(png_ptr, info_ptr) == PNG_COLOR_TYPE_PALETTE) ||
+      (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)))
 		png_set_expand(png_ptr);
 
 	if (png_get_bKGD(png_ptr, info_ptr, &original_bg)) {
@@ -180,17 +180,19 @@ read_png(png_structp png_ptr, png_infop info_ptr, at_input_opts_type * opts)
 	png_read_update_info(png_ptr, info_ptr);
 
 
-	info_ptr->row_pointers = (png_bytepp)png_malloc(png_ptr,
-							info_ptr->height * sizeof(png_bytep));
 #ifdef PNG_FREE_ME_SUPPORTED
 	info_ptr->free_me |= PNG_FREE_ROWS;
 #endif
-	for (row = 0; row < (int)info_ptr->height; row++)
-		info_ptr->row_pointers[row] = (png_bytep)png_malloc(png_ptr,
+
+  png_bytepp rows = png_malloc(png_ptr, (png_get_image_height(png_ptr, info_ptr) * sizeof(png_bytep)));
+
+  for (row = 0; row < (int) png_get_image_height(png_ptr, info_ptr); row++)
+    rows[row] = (png_bytep) png_malloc(png_ptr,
 								    png_get_rowbytes(png_ptr, info_ptr));
 
-	png_read_image(png_ptr, info_ptr->row_pointers);
-	info_ptr->valid |= PNG_INFO_IDAT;
+  png_set_rows(png_ptr, info_ptr, rows);
+
+  png_read_image(png_ptr, rows);
 	png_read_end(png_ptr, info_ptr);
 	return png_get_rows(png_ptr, info_ptr);
 }

@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-find_package(ImageMagick COMPONENTS MagickCore)
-find_package(PNG)
-# TODO CHECK for SWF
-# TODO CHECK for PSTOEDIT
+option(BUILD_DEPENDENCIES "Fetch and build all required dependencies" off)
 
 add_library(autotraceLib
         src/fit.c
@@ -48,7 +45,7 @@ add_library(autotraceLib
         src/output-plt.c
         src/output-ild.c
 
-        $<$<BOOL:${PNG_FOUND}>:src/input-png.c>
+        src/input-png.c
 
         $<$<BOOL:${ImageMagick_FOUND}>:src/input-magick.c>
         src/GError.h src/callbacks.h src/glibReplacement.h)
@@ -57,17 +54,31 @@ set_target_properties(autotraceLib PROPERTIES
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO
         )
+
+
+if (BUILD_DEPENDENCIES)
+    include(cmake/ExternalPNG.cmake)
+    add_dependencies(autotraceLib libpng)
+    link_directories(${CMAKE_BINARY_DIR}/external/lib)
+else ()
+
+    find_package(ImageMagick COMPONENTS MagickCore)
+    find_package(PNG)
+    # TODO CHECK for SWF
+    # TODO CHECK for PSTOEDIT
+endif ()
+
 target_include_directories(autotraceLib PUBLIC
         ${CMAKE_SOURCE_DIR}
         src
-        ${ImageMagick_INCLUDE_DIRS}
-        ${PNG_INCLUDE_DIRS})
+        $<$<BOOL:${BUILD_DEPENDENCIES}>:${CMAKE_BINARY_DIR}/external/include ${CMAKE_BINARY_DIR}/external/include>)
 target_link_libraries(autotraceLib PUBLIC
-        ${ImageMagick_LIBRARIES}
-        ${PNG_LIBRARIES})
+        $<$<BOOL:${BUILD_DEPENDENCIES}>:${CMAKE_BINARY_DIR}/external/lib/libpng.a ${CMAKE_BINARY_DIR}/external/lib/libz.a>
+        )
 target_compile_definitions(autotraceLib
         PRIVATE
-        $<$<BOOL:${PNG_FOUND}>:HAVE_LIBPNG ${PNG_DEFINITIONS}>
+        HAVE_LIBPNG
+        $<$<BOOL:${PNG_FOUND}>:${PNG_DEFINITIONS}>
         $<$<BOOL:${ImageMagick_FOUND}>:HAVE_MAGICK>
         PUBLIC
         #  TODO use cmake version
