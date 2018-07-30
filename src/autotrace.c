@@ -340,7 +340,7 @@ void at_splines_write(at_spline_writer *writer, FILE *writeto, char *file_name, 
   }
 
   setlocale(LC_NUMERIC, "C");
-  (*writer->func)(writeto, file_name, llx, lly, urx, ury, opts, *splines, msg_func, msg_data);
+  (*writer->func)(writeto, file_name, llx, lly, urx, ury, opts, *splines, msg_func, msg_data, NULL);
   if (new_opts)
     at_output_opts_free(opts);
 }

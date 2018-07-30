@@ -31,7 +31,7 @@ extern "C" {
 
   typedef
   int (*at_output_func)(FILE *, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
-                        at_splines_type shape, at_msg_func msg_func, void *msg_data);
+                        at_splines_type shape, at_msg_func msg_func, void *msg_data, void *user_data);
 
 extern int at_output_add_handler(const char *suffix, const char *description, at_output_func writer);
 

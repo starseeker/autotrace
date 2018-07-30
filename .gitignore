@@ -92,3 +92,6 @@ stamp-*
 # Clion
 .idea/
 cmake-build-*
+
+# Build dir
+build-*

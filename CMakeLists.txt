@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.8)
 
-option(BUILD_DEPENDENCIES "Fetch and build all required dependencies" off)
+if (NOT EMSCRIPTEN)
+    find_package(ImageMagick COMPONENTS MagickCore)
+    find_package(PNG)
+## TODO CHECK for SWF
+## TODO CHECK for PSTOEDIT
+endif ()
 
 add_library(autotraceLib
         src/fit.c
@@ -45,10 +50,9 @@ add_library(autotraceLib
         src/output-plt.c
         src/output-ild.c
 
-        src/input-png.c
+        $<$<OR:$<BOOL:${PNG_FOUND}>,$<BOOL:${EMSCRIPTEN}>>:src/input-png.c>
 
-        $<$<BOOL:${ImageMagick_FOUND}>:src/input-magick.c>
-        src/GError.h src/callbacks.h src/glibReplacement.h)
+        $<$<BOOL:${ImageMagick_FOUND}>:src/input-magick.c>)
 set_target_properties(autotraceLib PROPERTIES
         CXX_STANDARD 11
         CXX_STANDARD_REQUIRED YES
@@ -57,28 +61,15 @@ set_target_properties(autotraceLib PROPERTIES
 
 
 if (BUILD_DEPENDENCIES)
-    include(cmake/ExternalPNG.cmake)
     add_dependencies(autotraceLib libpng)
-    link_directories(${CMAKE_BINARY_DIR}/external/lib)
-else ()
-
-    find_package(ImageMagick COMPONENTS MagickCore)
-    find_package(PNG)
-    # TODO CHECK for SWF
-    # TODO CHECK for PSTOEDIT
 endif ()
 
 target_include_directories(autotraceLib PUBLIC
         ${CMAKE_SOURCE_DIR}
-        src
-        $<$<BOOL:${BUILD_DEPENDENCIES}>:${CMAKE_BINARY_DIR}/external/include ${CMAKE_BINARY_DIR}/external/include>)
-target_link_libraries(autotraceLib PUBLIC
-        $<$<BOOL:${BUILD_DEPENDENCIES}>:${CMAKE_BINARY_DIR}/external/lib/libpng.a ${CMAKE_BINARY_DIR}/external/lib/libz.a>
-        )
+        src)
 target_compile_definitions(autotraceLib
         PRIVATE
-        HAVE_LIBPNG
-        $<$<BOOL:${PNG_FOUND}>:${PNG_DEFINITIONS}>
+        $<$<OR:$<BOOL:${PNG_FOUND}>,$<BOOL:${EMSCRIPTEN}>>:HAVE_LIBPNG>
         $<$<BOOL:${ImageMagick_FOUND}>:HAVE_MAGICK>
         PUBLIC
         #  TODO use cmake version
@@ -86,13 +77,24 @@ target_compile_definitions(autotraceLib
         AUTOTRACE_WEB="http://autotrace.sourceforge.net"
         )
 
+add_subdirectory(src/wrapper)
 
-add_executable(autotrace
-        src/atou.c
-        src/atou.h
-        src/main.c
-        src/cmdline.h
-        src/strgicmp.h
-        )
+if (EMSCRIPTEN)
+    target_compile_options(autotraceLib PUBLIC -s USE_LIBPNG=1)
+else ()
+    target_link_libraries(autotraceLib PUBLIC
+            PNG::PNG
+            ${ImageMagick_LIBRARIES})
 
-target_link_libraries(autotrace PRIVATE autotraceLib m)
+    target_include_directories(autotraceLib PUBLIC
+            ${ImageMagick_INCLUDE_DIRS})
+
+    add_executable(autotrace
+            src/atou.c
+            src/atou.h
+            src/main.c
+            src/cmdline.h
+            src/strgicmp.h
+            )
+    target_link_libraries(autotrace PRIVATE autotraceLib m)
+endif ()
