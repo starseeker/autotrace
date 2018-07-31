@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <src/autotrace.h>
+#include "OutputOptions.h"
 
 class OutputOptionsBuilder {
 public:
@@ -12,13 +12,9 @@ public:
 
   OutputOptionsBuilder &setDpi(unsigned int dpi);
 
-  at_output_opts_type build();
+  OutputOptions build();
 
 private:
-  OutputOptionsBuilder();
-
-  at_output_opts_type outputOpts;
-
-  const unsigned int DEFAULT_DPI = 72;
+  OutputOptions outputOpts;
 };
 

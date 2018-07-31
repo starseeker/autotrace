@@ -10,7 +10,7 @@ FittingOptionsBuilder FittingOptionsBuilder::builder() {
   return FittingOptionsBuilder();
 }
 
-at_fitting_opts_type FittingOptionsBuilder::build() {
+FittingOptions FittingOptionsBuilder::build() {
   return fittingOpts;
 }
 

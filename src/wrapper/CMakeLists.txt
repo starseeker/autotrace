@@ -6,7 +6,9 @@ add_library(autotraceCppLib
         FittingOptionsBuidler.cpp
         InputOptionsBuilder.cpp
         OutputOptionsBuilder.cpp
-        )
+        OutputOptions.cpp
+        InputOptions.cpp
+        FittingOptions.cpp)
 
 target_include_directories(autotraceCppLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -16,7 +18,7 @@ set_target_properties(autotraceCppLib PROPERTIES
         CXX_EXTENSIONS NO
         )
 
-target_link_libraries(autotraceCppLib PUBLIC autotraceLib)
+target_link_libraries(autotraceCppLib PUBLIC autotraceLib json11)
 
 # Wrapper cmd test.
 add_executable(autotraceCpp main.cpp)

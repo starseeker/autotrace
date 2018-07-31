@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 
+option(BUILD_TESTS "Builds tests mostly for testing the wrapper" OFF)
+
 if (NOT EMSCRIPTEN)
     find_package(ImageMagick COMPONENTS MagickCore)
     find_package(PNG)
@@ -53,6 +55,7 @@ add_library(autotraceLib
         $<$<OR:$<BOOL:${PNG_FOUND}>,$<BOOL:${EMSCRIPTEN}>>:src/input-png.c>
 
         $<$<BOOL:${ImageMagick_FOUND}>:src/input-magick.c>)
+
 set_target_properties(autotraceLib PROPERTIES
         CXX_STANDARD 11
         CXX_STANDARD_REQUIRED YES
@@ -77,7 +80,12 @@ target_compile_definitions(autotraceLib
         AUTOTRACE_WEB="http://autotrace.sourceforge.net"
         )
 
+add_subdirectory(Vendor)
+
 add_subdirectory(src/wrapper)
+if (BUILD_TESTS)
+    add_subdirectory(src/test_wrapper)
+endif ()
 
 if (EMSCRIPTEN)
     target_compile_options(autotraceLib PUBLIC -s USE_LIBPNG=1)

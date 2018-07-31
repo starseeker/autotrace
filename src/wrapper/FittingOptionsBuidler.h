@@ -4,8 +4,9 @@
 
 #pragma once
 
+#include "FittingOptions.h"
+
 #include <src/autotrace.h>
-#include <src/fit.h>
 
 class FittingOptionsBuilder {
 public:
@@ -47,10 +48,10 @@ public:
 
   FittingOptionsBuilder &setWidthWeightFactor(float weight);
 
-  fitting_opts_type build();
+  FittingOptions build();
 
 private:
 
-  fitting_opts_type fittingOpts = new_fitting_opts();
+  FittingOptions fittingOpts;
 };
 

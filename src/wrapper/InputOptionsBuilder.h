@@ -4,25 +4,19 @@
 
 #pragma once
 
-
-#include <src/autotrace.h>
+#include "InputOptions.h"
 
 class InputOptionsBuilder {
 public:
   static InputOptionsBuilder builder();
 
-  at_input_opts_type build();
+  InputOptions build();
 
   InputOptionsBuilder &setBackgroudColor(_at_color color);
 
   InputOptionsBuilder &setCharCode(unsigned int charCode);
 
 private:
-public:
-  InputOptionsBuilder();
-
-private:
-  at_input_opts_type input_opts_type;
-
+  InputOptions inputOptions;
 };
 

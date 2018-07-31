@@ -9,12 +9,8 @@ OutputOptionsBuilder OutputOptionsBuilder::builder() {
   return OutputOptionsBuilder();
 }
 
-at_output_opts_type OutputOptionsBuilder::build() {
+OutputOptions OutputOptionsBuilder::build() {
   return outputOpts;
-}
-
-OutputOptionsBuilder::OutputOptionsBuilder() {
-  outputOpts.dpi = DEFAULT_DPI;
 }
 
 OutputOptionsBuilder &OutputOptionsBuilder::setDpi(unsigned int dpi) {
