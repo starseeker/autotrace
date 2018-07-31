@@ -11,24 +11,23 @@ OutputOptions::OutputOptions() : _at_output_opts_type() {
 OutputOptions::OutputOptions(json11::Json outputOptionsJson) :
     OutputOptions() {
   if (!outputOptionsJson.is_object()) {
-    throw std::runtime_error("OutputOptions: json is not an object " + outputOptionsJson.string_value());
+    throw std::runtime_error("OutputOptions: no top level array." + outputOptionsJson.dump());
   }
 
   const auto &objectItems = outputOptionsJson.object_items();
+  const auto &jsonDpi = objectItems.find("dpi");
 
-  const auto jsonDpi = objectItems.find("dpi");
   if (jsonDpi != objectItems.end()) {
     if (!jsonDpi->second.is_number()) {
-      throw std::runtime_error("OutputOptions: dpi should be a number " + outputOptionsJson.string_value());
+      throw std::runtime_error("OutputOptions: dpi should be a number " + outputOptionsJson.dump());
     }
 
     dpi = static_cast<unsigned int>(jsonDpi->second.number_value());
   }
-
-  // TODO Parse Json
 }
 
 json11::Json OutputOptions::toJson() {
-  // TODO create json
-  return json11::Json();
+  json11::Json::object outputObjectJson;
+  outputObjectJson.emplace("dpi", dpi);
+  return json11::Json{outputObjectJson};
 }
