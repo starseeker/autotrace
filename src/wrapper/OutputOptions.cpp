@@ -11,7 +11,7 @@ OutputOptions::OutputOptions() : _at_output_opts_type() {
 OutputOptions::OutputOptions(json11::Json outputOptionsJson) :
     OutputOptions() {
   if (!outputOptionsJson.is_object()) {
-    throw std::runtime_error("OutputOptions: no top level array." + outputOptionsJson.dump());
+    throw std::runtime_error("OutputOptions: top level is not an object." + outputOptionsJson.dump());
   }
 
   const auto &objectItems = outputOptionsJson.object_items();
@@ -19,7 +19,7 @@ OutputOptions::OutputOptions(json11::Json outputOptionsJson) :
 
   if (jsonDpi != objectItems.end()) {
     if (!jsonDpi->second.is_number()) {
-      throw std::runtime_error("OutputOptions: dpi should be a number " + outputOptionsJson.dump());
+      throw std::runtime_error("OutputOptions: dpi should be a number. " + outputOptionsJson.dump());
     }
 
     dpi = static_cast<unsigned int>(jsonDpi->second.number_value());
