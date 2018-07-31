@@ -9,6 +9,11 @@
 #include "spline.h"
 #include "exception.h"
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif                          /* __cplusplus */
+
 /* See fit.c for descriptions of these variables, all of which can be
    set using options.  */
 typedef at_fitting_opts_type fitting_opts_type;
@@ -20,6 +25,11 @@ fitted_splines(pixel_outline_list_type, fitting_opts_type *, at_distance_map *, 
                void *);
 
 /* Get a new set of fitting options */
-extern fitting_opts_type new_fitting_opts(void);
+fitting_opts_type new_fitting_opts(void);
+
+
+#ifdef __cplusplus
+}
+#endif                          /* __cplusplus */
 
 #endif /* not FIT_H */

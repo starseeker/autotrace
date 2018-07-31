@@ -3,21 +3,24 @@
 //
 
 #include "bitmap.h"
+#include "FittingOptionsBuidler.h"
+#include "InputOptionsBuilder.h"
+#include "OutputOptionsBuilder.h"
 
 #include <src/wrapper/Autotrace.h>
 
 #include <iostream>
 
-const std::string assetPath = ASSET_PATH;
-const std::string inputPath = assetPath + "antenna-architecture-building-443416.png";
-const std::string outputPath = assetPath + "test.svg";
+const std::string assetPath = ASSET_PATH; // NOLINT
+const auto inputPath = assetPath + "antenna-architecture-building-443416.png"; // NOLINT
+const auto outputPath = assetPath + "test.svg"; //NOLINT
 
 int main() {
   const
 
-  auto fittingOptions = *at_fitting_opts_new();
-  auto inputOptions = *at_input_opts_new();
-  auto outputOptions = *at_output_opts_new();
+  auto fittingOptions = FittingOptionsBuilder::builder().build();
+  auto inputOptions = InputOptionsBuilder::builder().build();
+  auto outputOptions = OutputOptionsBuilder::builder().build();
 
   Options options{fittingOptions, inputOptions, outputOptions};
   Autotrace autotrace{inputPath, outputPath, options};

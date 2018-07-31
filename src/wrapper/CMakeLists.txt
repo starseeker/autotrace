@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.8)
 
-add_library(autotraceCppLib Autotrace.cpp Options.cpp)
+add_library(autotraceCppLib
+        Autotrace.cpp
+        Options.cpp
+        FittingOptionsBuidler.cpp
+        InputOptionsBuilder.cpp
+        OutputOptionsBuilder.cpp
+        )
 
 target_include_directories(autotraceCppLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
