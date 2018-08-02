@@ -11,6 +11,8 @@ class InputOptions : public at_input_opts_type {
 public:
   InputOptions();
 
+  virtual ~InputOptions();
+
   explicit InputOptions(json11::Json inputOptionsJson);
 
   json11::Json toJson();

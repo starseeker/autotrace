@@ -8,9 +8,10 @@ add_library(autotraceCppLib
         OutputOptionsBuilder.cpp
         OutputOptions.cpp
         InputOptions.cpp
-        FittingOptions.cpp)
+        FittingOptions.cpp
+        Json/JsonHelper.cpp)
 
-target_include_directories(autotraceCppLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(autotraceCppLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} Json)
 
 set_target_properties(autotraceCppLib PROPERTIES
         CXX_STANDARD 17

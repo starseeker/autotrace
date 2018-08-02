@@ -22,7 +22,7 @@ OutputOptions::OutputOptions(json11::Json outputOptionsJson) :
       throw std::runtime_error("OutputOptions: dpi should be a number. " + outputOptionsJson.dump());
     }
 
-    dpi = static_cast<unsigned int>(jsonDpi->second.number_value());
+    dpi = jsonDpi->second.int_value();
   }
 }
 
