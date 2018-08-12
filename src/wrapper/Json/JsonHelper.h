@@ -13,4 +13,5 @@ using namespace json11;
 
 namespace JsonHelper {
   std::optional<int> getNumber(Json::object jsonObject, std::string key);
+  std::optional<Json::object> getObject(Json::object jsonObject, std::string key);
 };

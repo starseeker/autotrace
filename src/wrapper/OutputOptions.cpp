@@ -4,6 +4,8 @@
 
 #include "OutputOptions.h"
 
+#include <Json/JsonHelper.h>
+
 OutputOptions::OutputOptions() : _at_output_opts_type() {
   dpi = DEFAULT_DPI;
 }
@@ -15,14 +17,9 @@ OutputOptions::OutputOptions(json11::Json outputOptionsJson) :
   }
 
   const auto &objectItems = outputOptionsJson.object_items();
-  const auto &jsonDpi = objectItems.find("dpi");
 
-  if (jsonDpi != objectItems.end()) {
-    if (!jsonDpi->second.is_number()) {
-      throw std::runtime_error("OutputOptions: dpi should be a number. " + outputOptionsJson.dump());
-    }
-
-    dpi = jsonDpi->second.int_value();
+  if(const auto maybeDpi = JsonHelper::getNumber(objectItems, "dpi")) {
+    dpi = *maybeDpi;
   }
 }
 
