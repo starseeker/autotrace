@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.2)
 
 option(BUILD_TESTS "Builds tests mostly for testing the wrapper" OFF)
 
