@@ -14,7 +14,7 @@ public:
 
   explicit OutputOptions(json11::Json outputOptionsJson);
 
-  json11::Json toJson();
+  json11::Json toJson() const;
 
 private:
   const unsigned int DEFAULT_DPI = 72;

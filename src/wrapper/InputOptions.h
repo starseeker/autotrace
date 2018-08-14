@@ -13,7 +13,10 @@ public:
 
   virtual ~InputOptions();
 
+  InputOptions(const InputOptions &other);
+  InputOptions& operator=(const InputOptions& other) = default;
+
   explicit InputOptions(json11::Json inputOptionsJson);
 
-  json11::Json toJson();
+  json11::Json toJson() const;
 };

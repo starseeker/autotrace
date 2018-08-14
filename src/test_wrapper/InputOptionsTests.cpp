@@ -5,6 +5,7 @@
 //
 
 #include "InputOptions.h"
+#include "InputOptionsBuilder.h"
 
 #include <Json/JsonHelper.h>
 
@@ -33,12 +34,10 @@ TEST(InputOptionsTests, FromJson) {
 }
 
 TEST(InputOptionsTests, ToJson) {
-
-  InputOptions inputOptions;
-  inputOptions.charcode = 15;
-  inputOptions.background_color->r = 20;
-  inputOptions.background_color->g = 21;
-  inputOptions.background_color->b = 22;
+  const auto inputOptions = InputOptionsBuilder::builder()
+    .setBackgroudColor({20,21,22})
+    .setCharCode(15)
+    .build();
 
   const auto inputOptionsJson = inputOptions.toJson();
   EXPECT_TRUE(inputOptionsJson.is_object());
@@ -52,15 +51,15 @@ TEST(InputOptionsTests, ToJson) {
   EXPECT_TRUE(maybeBackground);
   const auto background = *maybeBackground;
 
-  const auto maybeRed = JsonHelper::getNumber(objectItems, "red");
+  const auto maybeRed = JsonHelper::getNumber(background, "red");
   EXPECT_TRUE(maybeRed);
   EXPECT_EQ(20, *maybeRed);
 
-  const auto maybeGreen = JsonHelper::getNumber(objectItems, "green");
+  const auto maybeGreen = JsonHelper::getNumber(background, "green");
   EXPECT_TRUE(maybeGreen);
   EXPECT_EQ(21, *maybeGreen);
 
-  const auto maybeBlue = JsonHelper::getNumber(objectItems, "blue");
+  const auto maybeBlue = JsonHelper::getNumber(background, "blue");
   EXPECT_TRUE(maybeBlue);
   EXPECT_EQ(22, *maybeBlue);
 }

@@ -5,6 +5,7 @@
 //
 
 #include "OutputOptions.h"
+#include "OutputOptionsBuilder.h"
 
 #include <gtest/gtest.h>
 
@@ -28,8 +29,9 @@ TEST(OutputOptionsTests, FromJson) {
 TEST(OutputOptionsTests, ToJson) {
 
   const auto expectDpi = [](const auto dpiValue) {
-    OutputOptions outputOptions;
-    outputOptions.dpi = dpiValue;
+    const auto outputOptions = OutputOptionsBuilder::builder()
+      .setDpi(dpiValue)
+      .build();
 
     const auto outOptionsJson = outputOptions.toJson();
     EXPECT_TRUE(outOptionsJson.is_object());

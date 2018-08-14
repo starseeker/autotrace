@@ -23,7 +23,7 @@ OutputOptions::OutputOptions(json11::Json outputOptionsJson) :
   }
 }
 
-json11::Json OutputOptions::toJson() {
+json11::Json OutputOptions::toJson() const {
   json11::Json::object outputObjectJson;
   outputObjectJson.emplace("dpi", dpi);
   return json11::Json{outputObjectJson};

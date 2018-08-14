@@ -14,7 +14,7 @@ InputOptions::InputOptions() : _at_input_opts_type() {
 InputOptions::InputOptions(json11::Json inputOptionsJson) :
     InputOptions() {
   if (!inputOptionsJson.is_object()) {
-    throw std::runtime_error("OutputOptions: top level is not an object." + inputOptionsJson.dump());
+    throw std::runtime_error("InputOptions: top level is not an object." + inputOptionsJson.dump());
   }
 
   const auto &objectItems = inputOptionsJson.object_items();
@@ -23,34 +23,35 @@ InputOptions::InputOptions(json11::Json inputOptionsJson) :
     charcode = static_cast<unsigned>(*maybeCharcode);
   }
 
-  if (const auto maybeBackgroundColor = JsonHelper::getObject(objectItems, "background_color")) {
-    const auto backgroundColor = *maybeBackgroundColor;
-
-    const auto maybeRed = JsonHelper::getNumber(backgroundColor, "red");
-    const auto maybeGreen = JsonHelper::getNumber(backgroundColor, "green");
-    const auto maybeBlue = JsonHelper::getNumber(backgroundColor, "blue");
-
-    if(!maybeRed || !maybeGreen || !maybeBlue) {
-      throw std::runtime_error("OutputOptions: background_color red, green, blue should be present and numbers " + inputOptionsJson.dump());
-    }
-
-    const auto colorsInRange = [](const auto colorValue){ return colorValue > 0 && colorValue < 255; };
-
-    if(!colorsInRange(*maybeRed) && !colorsInRange(maybeGreen) && !colorsInRange(maybeBlue)) {
-      throw std::runtime_error("OutputOptions: background_color red, green, blue should be numbers between 0 and 255 " + inputOptionsJson.dump());
-    }
-
-    background_color->r = static_cast<uint8_t>(*maybeRed);
-    background_color->g = static_cast<uint8_t>(*maybeGreen);
-    background_color->b = static_cast<uint8_t>(*maybeBlue);
+  if(const auto maybeColor = JsonHelper::getColor(objectItems, "background_color")) {
+    background_color->r = maybeColor->r;
+    background_color->g = maybeColor->g;
+    background_color->b = maybeColor->b;
   }
-
 }
 
-json11::Json InputOptions::toJson() {
-  return json11::Json();
+json11::Json InputOptions::toJson() const {
+  json11::Json::object inputObjectJson;
+  inputObjectJson.emplace("charcode", (int)charcode);
+
+  json11::Json::object backgroundColor;
+  backgroundColor.emplace("red", background_color->r);
+  backgroundColor.emplace("blue", background_color->b);
+  backgroundColor.emplace("green", background_color->g);
+  inputObjectJson.emplace("background_color", backgroundColor);
+
+  return json11::Json{inputObjectJson};
 }
 
 InputOptions::~InputOptions() {
   delete background_color;
+}
+
+InputOptions::InputOptions(const InputOptions &other) : _at_input_opts_type(other) {
+  background_color = new at_color();
+  background_color->r = other.background_color->r;
+  background_color->g = other.background_color->g;
+  background_color->b = other.background_color->b;
+
+  charcode = other.charcode;
 }

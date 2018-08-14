@@ -38,7 +38,7 @@ public:
 
   FittingOptionsBuilder &setDespeckleLevel(unsigned int despeckleLevel);
 
-  FittingOptionsBuilder &setDespeckleTightness(unsigned int despeckleTightness);
+  FittingOptionsBuilder &setDespeckleTightness(float despeckleTightness);
 
   FittingOptionsBuilder &setNoiseRemoval(float removal);
 

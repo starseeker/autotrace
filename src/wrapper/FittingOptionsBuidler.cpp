@@ -15,7 +15,9 @@ FittingOptions FittingOptionsBuilder::build() {
 }
 
 FittingOptionsBuilder &FittingOptionsBuilder::setBackgroudColor(_at_color color) {
-  fittingOpts.background_color = at_color_copy(&color);
+  fittingOpts.background_color->r = color.r;
+  fittingOpts.background_color->b = color.b;
+  fittingOpts.background_color->g = color.g;
   return *this;
 }
 
@@ -79,7 +81,7 @@ FittingOptionsBuilder &FittingOptionsBuilder::setDespeckleLevel(unsigned int des
   return *this;
 }
 
-FittingOptionsBuilder &FittingOptionsBuilder::setDespeckleTightness(unsigned int despeckleTightness) {
+FittingOptionsBuilder &FittingOptionsBuilder::setDespeckleTightness(float despeckleTightness) {
   fittingOpts.despeckle_tightness = despeckleTightness;
   return *this;
 }
