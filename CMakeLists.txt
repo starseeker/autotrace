@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.2)
 
+cmake_policy(SET CMP0048 NEW)
+project(autotrace)
+
 option(BUILD_TESTS "Builds tests mostly for testing the wrapper" OFF)
 
 if (NOT EMSCRIPTEN)

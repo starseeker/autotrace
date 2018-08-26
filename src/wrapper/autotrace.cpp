@@ -2,7 +2,6 @@
 // Created by Nick Winder on 6/9/18.
 //
 
-#include "bitmap.h"
 #include "FittingOptionsBuidler.h"
 #include "InputOptionsBuilder.h"
 #include "OutputOptionsBuilder.h"
@@ -15,9 +14,7 @@ const std::string assetPath = ASSET_PATH; // NOLINT
 const auto inputPath = assetPath + "antenna-architecture-building-443416.png"; // NOLINT
 const auto outputPath = assetPath + "test.svg"; //NOLINT
 
-int main() {
-  const
-
+void autotraceRun() {
   auto fittingOptions = FittingOptionsBuilder::builder().build();
   auto inputOptions = InputOptionsBuilder::builder().build();
   auto outputOptions = OutputOptionsBuilder::builder().build();
@@ -30,6 +27,23 @@ int main() {
   }
 
   std::cout << "Finished" << std::endl;
+}
 
+#ifdef EMSCRIPTEN
+#include <emscripten/bind.h>
+
+using namespace emscripten;
+
+#pragma error
+EMSCRIPTEN_BINDINGS(autotraceCpp) {
+  function("autotraceRun", &autotraceRun);
+}
+#else
+
+int main() {
+
+  autotraceRun();
   return 0;
 }
+
+#endif

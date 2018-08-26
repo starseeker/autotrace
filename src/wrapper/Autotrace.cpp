@@ -3,12 +3,6 @@
 //
 
 #include "Autotrace.h"
-#include "Expected.h"
-
-#include <src/logreport.h>
-
-#include <fstream>
-#include <src/filename.h>
 
 Autotrace::Autotrace(const std::string &inputFile, const std::string &outputFile, const Options &options) : inputFile(
     inputFile), outputFilePath(outputFile), options(options) {
@@ -33,12 +27,10 @@ nonstd::expected<void, std::string> Autotrace::produceOutput() {
 
   const auto bitmap = at_bitmap_read(inputReader, const_cast<char *>(inputFile.c_str()),
                                      const_cast<at_input_opts_type *>(&options.inputOptions), nullptr, nullptr);
-//  if (report_progress) {
-//    progress_reporter = dot_printer;
-//    fprintf(stderr, "%-15s", input_name);
-//  };
 
-  int progress_stat = 0;
+    if (bitmap->bitmap == nullptr) {
+        return nonstd::make_unexpected("Unable to open file " + inputFile);
+    }
 
   const auto splines = at_splines_new_full(bitmap, const_cast<at_fitting_opts_type *>(&options.fittingOptions), nullptr,
                                            nullptr, nullptr, nullptr, nullptr, nullptr);
@@ -50,9 +42,6 @@ nonstd::expected<void, std::string> Autotrace::produceOutput() {
 
   at_splines_free(splines);
   at_bitmap_free(bitmap);
-
-//  if (report_progress)
-//    fputs("\n", stderr);
 
   return nonstd::expected<void, std::string>();
 }
