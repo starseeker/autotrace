@@ -22,8 +22,6 @@
 #endif /* Def: HAVE_CONFIG_H */
 
 #include "spline.h"
-#include "color.h"
-#include "output-svg.h"
 
 static void out_splines(FILE * file, spline_list_array_type shape, int height)
 {
@@ -70,7 +68,7 @@ int output_svg_writer(FILE *file, char *name, int llx, int lly, int urx, int ury
   int width = urx - llx;
   int height = ury - lly;
   fputs("<?xml version=\"1.0\" standalone=\"yes\"?>\n", file);
-  fprintf(file, "<svg width=\"%d\" height=\"%d\">\n", width, height);
+  fprintf(file, "<svg viewBox=\"0 0 %d %d\" width=\"%d\" height=\"%d\">\n", width, height, width, height);
 
   out_splines(file, shape, height);
   fputs("</svg>\n", file);

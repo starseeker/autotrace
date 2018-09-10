@@ -9,24 +9,74 @@
 #include <src/wrapper/Autotrace.h>
 
 #include <iostream>
+#include <fstream>
+
+using namespace json11;
 
 const std::string assetPath = ASSET_PATH; // NOLINT
-const auto inputPath = assetPath + "antenna-architecture-building-443416.png"; // NOLINT
+const auto inputPath = assetPath + "Test.png"; // NOLINT
 const auto outputPath = assetPath + "test.svg"; //NOLINT
 
-void autotraceRun() {
-  auto fittingOptions = FittingOptionsBuilder::builder().build();
-  auto inputOptions = InputOptionsBuilder::builder().build();
-  auto outputOptions = OutputOptionsBuilder::builder().build();
+struct Result {
+    bool success;
+    std::string error;
+};
+
+struct ResultULongLong {
+  bool success;
+  std::string error;
+  unsigned long value;
+};
+
+Result autotraceRun(const uintptr_t inputBuffer, const size_t inputBufferSize,
+                    const std::string &fittingOptionsJson, const std::string &inputOptionsJson,
+                    const std::string &outputOptionsJson) {
+
+
+  std::string jsonError;
+  auto jsonResult = Json::parse(fittingOptionsJson, jsonError, STANDARD);
+  if (!jsonError.empty()) {
+    return {false, "Fitting options json error : " + jsonError};
+  }
+  FittingOptions fittingOptions{jsonResult};
+
+  jsonResult = Json::parse(inputOptionsJson, jsonError, STANDARD);
+  if (!jsonError.empty()) {
+    return {false, "Fitting options json error : " + jsonError};
+  }
+  InputOptions inputOptions{jsonResult};
+
+  jsonResult = Json::parse(outputOptionsJson, jsonError, STANDARD);
+  if (!jsonError.empty()) {
+    return {false, "Fitting options json error : " + jsonError};
+  }
+  OutputOptions outputOptions{jsonResult};
+
+  std::ofstream inputFile(inputPath, std::ofstream::binary);
+  inputFile.write(reinterpret_cast<const char *const>(inputBuffer), inputBufferSize);
+  inputFile.close();
 
   Options options{fittingOptions, inputOptions, outputOptions};
   Autotrace autotrace{inputPath, outputPath, options};
   const auto outputResult = autotrace.produceOutput();
-  if (!outputResult) {
-    std::cout << "Error : " << outputResult.error() << std::endl;
-  }
 
-  std::cout << "Finished" << std::endl;
+  return {outputResult.has_value(), outputResult ? "" : outputResult.error()};
+}
+
+ResultULongLong outputFileSize() {
+  std::ifstream in(outputPath, std::ifstream::ate | std::ifstream::binary);
+  return {true, "", static_cast<unsigned long>(in.tellg())};
+}
+
+Result getOutputFile(const uintptr_t outputBuffer, const size_t outputBufferSize) {
+  if (outputBufferSize < outputFileSize().value) {
+    return {false, "Buffer is to small to recieve the file"};
+  }
+  std::ifstream in(outputPath, std::ifstream::binary);
+
+  in.read(reinterpret_cast<char *>(outputBuffer), outputBufferSize);
+
+  return {true, ""};
 }
 
 #ifdef EMSCRIPTEN
@@ -34,15 +84,36 @@ void autotraceRun() {
 
 using namespace emscripten;
 
-#pragma error
 EMSCRIPTEN_BINDINGS(autotraceCpp) {
-  function("autotraceRun", &autotraceRun);
+  value_object<Result>("Result")
+    .field("success", &Result::success)
+    .field("error", &Result::error)
+    ;
+
+  value_object<ResultULongLong>("ResultULongLong")
+    .field("success", &ResultULongLong::success)
+    .field("error", &ResultULongLong::error)
+    .field("value", &ResultULongLong::value)
+    ;
+
+  function("autotraceRun", &autotraceRun, allow_raw_pointers());
+  function("getOutputFile", &getOutputFile, allow_raw_pointers());
+  function("outputFileSize", &outputFileSize);
 }
 #else
 
 int main() {
+  const FittingOptions fittingOptions = FittingOptionsBuilder::builder().build();
+  const InputOptions inputOptions = InputOptionsBuilder::builder().build();
+  const OutputOptions outputOptions = OutputOptionsBuilder::builder().build();
 
-  autotraceRun();
+  Options options{fittingOptions, inputOptions, outputOptions};
+  Autotrace autotrace{inputPath, outputPath, options};
+  const auto outputResult = autotrace.produceOutput();
+  if (!outputResult.has_value()) {
+    std::cout << outputResult.error();
+        return 1;
+    }
   return 0;
 }
 

@@ -37,15 +37,9 @@ target_link_libraries(autotraceCpp PUBLIC autotraceCppLib)
 
 if (EMSCRIPTEN)
     set_target_properties(autotraceCpp PROPERTIES LINK_FLAGS
-            "--bind"
-            "-s WASM=1"
-            "-s ALLOW_MEMORY_GROWTH=1"
-            "-s USE_LIBPNG=1"
-            "--embed-file ${CMAKE_CURRENT_SOURCE_DIR}/../../assets/@/assets/"
-            "-s NO_EXIT_RUNTIME=1"
-            "-s MODULARIZE=1")
+            "--bind -s WASM=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_MEMORY_GROWTH=1 -s USE_LIBPNG=1 -s NO_EXIT_RUNTIME=1 -s MODULARIZE=1 --embed-file ${CMAKE_CURRENT_SOURCE_DIR}/../../assets/@/assets/")
     target_compile_options(autotraceCpp PRIVATE --bind)
     target_compile_definitions(autotraceCpp PRIVATE ASSET_PATH="/assets/")
 else ()
-    target_compile_definitions(autotraceCpp PRIVATE ASSET_PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../asset")
+    target_compile_definitions(autotraceCpp PRIVATE ASSET_PATH="${CMAKE_CURRENT_SOURCE_DIR}/../../assets/")
 endif ()
