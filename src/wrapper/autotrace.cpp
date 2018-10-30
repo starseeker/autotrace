@@ -1,120 +1,60 @@
 //
-// Created by Nick Winder on 6/9/18.
+// Created by Nick Winder on 6/10/18.
 //
 
-#include "FittingOptionsBuidler.h"
-#include "InputOptionsBuilder.h"
-#include "OutputOptionsBuilder.h"
+#include "Autotrace.h"
 
-#include <src/wrapper/Autotrace.h>
-
-#include <iostream>
-#include <fstream>
-
-using namespace json11;
-
-const std::string assetPath = ASSET_PATH; // NOLINT
-const auto inputPath = assetPath + "Test.png"; // NOLINT
-const auto outputPath = assetPath + "test.svg"; //NOLINT
-
-struct Result {
-    bool success;
-    std::string error;
-};
-
-struct ResultULongLong {
-  bool success;
-  std::string error;
-  unsigned long value;
-};
-
-Result autotraceRun(const uintptr_t inputBuffer, const size_t inputBufferSize,
-                    const std::string &fittingOptionsJson, const std::string &inputOptionsJson,
-                    const std::string &outputOptionsJson) {
-
-
-  std::string jsonError;
-  auto jsonResult = Json::parse(fittingOptionsJson, jsonError, STANDARD);
-  if (!jsonError.empty()) {
-    return {false, "Fitting options json error : " + jsonError};
-  }
-  FittingOptions fittingOptions{jsonResult};
-
-  jsonResult = Json::parse(inputOptionsJson, jsonError, STANDARD);
-  if (!jsonError.empty()) {
-    return {false, "Fitting options json error : " + jsonError};
-  }
-  InputOptions inputOptions{jsonResult};
-
-  jsonResult = Json::parse(outputOptionsJson, jsonError, STANDARD);
-  if (!jsonError.empty()) {
-    return {false, "Fitting options json error : " + jsonError};
-  }
-  OutputOptions outputOptions{jsonResult};
-
-  std::ofstream inputFile(inputPath, std::ofstream::binary);
-  inputFile.write(reinterpret_cast<const char *const>(inputBuffer), inputBufferSize);
-  inputFile.close();
-
-  Options options{fittingOptions, inputOptions, outputOptions};
-  Autotrace autotrace{inputPath, outputPath, options};
-  const auto outputResult = autotrace.produceOutput();
-
-  return {outputResult.has_value(), outputResult ? "" : outputResult.error()};
+Autotrace::Autotrace(const std::string &inputFile, const std::string &outputFile, const Options &options) : inputFile(
+    inputFile), outputFilePath(outputFile), options(options) {
+  autotrace_init();
 }
 
-ResultULongLong outputFileSize() {
-  std::ifstream in(outputPath, std::ifstream::ate | std::ifstream::binary);
-  return {true, "", static_cast<unsigned long>(in.tellg())};
-}
-
-Result getOutputFile(const uintptr_t outputBuffer, const size_t outputBufferSize) {
-  if (outputBufferSize < outputFileSize().value) {
-    return {false, "Buffer is to small to recieve the file"};
+nonstd::expected<void, std::string> Autotrace::produceOutput() {
+  const auto inputReader = at_input_get_handler(const_cast<char *>(inputFile.c_str()));
+  if (inputReader == nullptr) {
+    return nonstd::make_unexpected("Input reader could not be found for " + inputFile);
   }
-  std::ifstream in(outputPath, std::ifstream::binary);
 
-  in.read(reinterpret_cast<char *>(outputBuffer), outputBufferSize);
+  const auto outputWriter = at_output_get_handler(const_cast<char *>(outputFilePath.c_str()));
+  if (outputWriter == nullptr) {
+    return nonstd::make_unexpected("Output writer cannot be determined for " + outputFilePath);
+  }
 
-  return {true, ""};
-}
+  const auto outputFile = fopen(outputFilePath.c_str(), "wb");
+  if (outputFile == nullptr) {
+    return nonstd::make_unexpected("Unable to open file " + outputFilePath);
+  }
 
-#ifdef EMSCRIPTEN
-#include <emscripten/bind.h>
+  const auto bitmap = at_bitmap_read(inputReader, const_cast<char *>(inputFile.c_str()),
+                                     const_cast<at_input_opts_type *>(&options.inputOptions), nullptr, nullptr);
 
-using namespace emscripten;
-
-EMSCRIPTEN_BINDINGS(autotraceCpp) {
-  value_object<Result>("Result")
-    .field("success", &Result::success)
-    .field("error", &Result::error)
-    ;
-
-  value_object<ResultULongLong>("ResultULongLong")
-    .field("success", &ResultULongLong::success)
-    .field("error", &ResultULongLong::error)
-    .field("value", &ResultULongLong::value)
-    ;
-
-  function("autotraceRun", &autotraceRun, allow_raw_pointers());
-  function("getOutputFile", &getOutputFile, allow_raw_pointers());
-  function("outputFileSize", &outputFileSize);
-}
-#else
-
-int main() {
-  const FittingOptions fittingOptions = FittingOptionsBuilder::builder().build();
-  const InputOptions inputOptions = InputOptionsBuilder::builder().build();
-  const OutputOptions outputOptions = OutputOptionsBuilder::builder().build();
-
-  Options options{fittingOptions, inputOptions, outputOptions};
-  Autotrace autotrace{inputPath, outputPath, options};
-  const auto outputResult = autotrace.produceOutput();
-  if (!outputResult.has_value()) {
-    std::cout << outputResult.error();
-        return 1;
+    if (bitmap->bitmap == nullptr) {
+        return nonstd::make_unexpected("Unable to open file " + inputFile);
     }
-  return 0;
+
+  const auto splines = at_splines_new_full(bitmap, const_cast<at_fitting_opts_type *>(&options.fittingOptions), nullptr,
+                                           nullptr, nullptr, nullptr, nullptr, nullptr);
+
+  at_splines_write(outputWriter, outputFile, const_cast<char *>(outputFilePath.c_str()),
+                   const_cast<at_output_opts_type *>(&options.outputOptions), splines, nullptr, nullptr);
+
+  fclose(outputFile);
+
+  at_splines_free(splines);
+  at_bitmap_free(bitmap);
+
+  return nonstd::expected<void, std::string>();
 }
 
-#endif
+static void dump(at_bitmap *bitmap, FILE *fp) {
+  unsigned short width, height;
+  unsigned int np;
+
+  width = at_bitmap_get_width(bitmap);
+  height = at_bitmap_get_height(bitmap);
+  np = at_bitmap_get_planes(bitmap);
+
+  for (int i = 0; i < width * height * np; ++i) {
+    putc(AT_BITMAP_BITS(bitmap)[i], stdout);
+  }
+}
