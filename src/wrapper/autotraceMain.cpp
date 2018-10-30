@@ -68,7 +68,7 @@ ResultULongLong outputFileSize() {
 
 Result getOutputFile(const uintptr_t outputBuffer, const size_t outputBufferSize) {
   if (outputBufferSize < outputFileSize().value) {
-    return {false, "Buffer is to small to recieve the file"};
+    return {false, "Buffer is to small to receive the file"};
   }
   std::ifstream in(outputPath, std::ifstream::binary);
 
