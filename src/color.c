@@ -28,7 +28,7 @@
 #include "glibReplacement.h"
 
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 /* TODO:
    Use gmemcache */

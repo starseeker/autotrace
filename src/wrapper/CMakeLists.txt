@@ -25,7 +25,7 @@ set_target_properties(autotraceCppLib PROPERTIES
 target_link_libraries(autotraceCppLib PUBLIC autotraceLib json11)
 
 # Wrapper cmd test.
-add_executable(autotraceCpp autotrace.cpp)
+add_executable(autotraceCpp autotraceMain.cpp)
 
 set_target_properties(autotraceCpp PROPERTIES
         CXX_STANDARD 17
