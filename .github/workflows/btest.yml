@@ -9,11 +9,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: textbook/git-checkout-submodule-action@2.0.0
     - name: configure
-      run: mkdir build && cd build && cmake ..
+      run: git submodule update --init && mkdir build && cd build && cmake ..
     - name: build
-      run: camke --build build
+      run: cmake --build build
     - name: test
       run: cd build && ctest
 
@@ -26,10 +25,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: textbook/git-checkout-submodule-action@2.0.0
     - name: configure
-      run: mkdir build && cd build && cmake ..
+      run: git.exe submodule update --init && mkdir build && cd build && cmake ..
     - name: build
-      run: camke --build build --config Debug
+      run: cmake --build build --config Debug
     - name: test
       run: cd build && ctest
