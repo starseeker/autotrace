@@ -21,7 +21,6 @@
 #define AT_TYPES_H
 
 #include <stdint.h>
-#include <glib.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,11 +28,11 @@ extern "C" {
 
 /* Cartesian points.  */
   typedef struct _at_coord {
-    gushort x, y;
+    unsigned short x, y;
   } at_coord;
 
   typedef struct _at_real_coord {
-    gfloat x, y, z;
+    float x, y, z;
   } at_real_coord;
 
 #ifdef __cplusplus

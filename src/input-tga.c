@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/param.h>
 /* #include <unistd.h> */
 
 #include "bitmap.h"
@@ -95,14 +96,16 @@ struct tga_header {
 static struct {
   unsigned int extensionAreaOffset;
   unsigned int developerDirectoryOffset;
-#define TGA_SIGNATURE "TRUEVISION-XFILE"
+#define TGA_SIGNATURE "trueVISION-XFILE"
   char signature[16];
   char dot;
   char null;
 } tga_footer;
 
 static at_bitmap ReadImage(FILE * fp, struct tga_header *hdr, at_exception_type * exp);
-at_bitmap input_tga_reader(gchar * filename, at_input_opts_type * opts, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+
+at_bitmap
+input_tga_reader(char *filename, at_input_opts_type *opts, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   FILE *fp;
   struct tga_header hdr;

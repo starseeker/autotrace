@@ -14,7 +14,7 @@
 
 typedef struct {
   at_real_coord coord;
-  gfloat t;
+  float t;
 } point_type;
 
 /* It turns out to be convenient to break the list of all the pixels in
@@ -24,7 +24,7 @@ typedef struct {
 struct curve {
   point_type *point_list;
   unsigned length;
-  gboolean cyclic;
+  bool cyclic;
   vector_type *start_tangent;
   vector_type *end_tangent;
   struct curve *previous;
@@ -81,7 +81,7 @@ extern void append_point(curve_type c, at_real_coord p);
 
 /* Write some or all, respectively, of the curve C in human-readable
    form to the log file, if logging is enabled.  */
-extern void log_curve(curve_type c, gboolean print_t);
+extern void log_curve(curve_type c, bool print_t);
 extern void log_entire_curve(curve_type c);
 
 /* Display the curve C online, if displaying is enabled.  */
@@ -91,8 +91,8 @@ extern void display_curve(curve_type);
 typedef struct {
   curve_type *data;
   unsigned length;
-  gboolean clockwise;
-  gboolean open;
+  bool clockwise;
+  bool open;
 } curve_list_type;
 
 /* Number of curves in the list.  */
@@ -125,7 +125,8 @@ typedef struct {
 #define LAST_CURVE_LIST_ARRAY_ELT LAST_CURVE_LIST_ELT
 
 extern curve_list_array_type new_curve_list_array(void);
-extern void free_curve_list_array(curve_list_array_type *, at_progress_func, gpointer);
+
+extern void free_curve_list_array(curve_list_array_type *, at_progress_func, void *);
 extern void append_curve_list(curve_list_array_type *, curve_list_type);
 
 #endif /* not CURVE_H */

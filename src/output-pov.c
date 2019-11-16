@@ -41,7 +41,7 @@
   fprintf (pov_file, s, __VA_ARGS__)
 
 /* These macros just output their arguments.  */
-#define OUT_REAL(r)	fprintf (pov_file, r == (lround (r = lround((gfloat)6.0*r)/(gfloat)6.0))				\
+#define OUT_REAL(r)  fprintf (pov_file, r == (lround (r = lround((float)6.0*r)/(float)6.0))        \
                                   ? "%.0f " : "%.3f ", r)
 
 /* This outputs the Povray code which produces the shape in
@@ -109,9 +109,9 @@ static void out_splines(FILE * pov_file, spline_list_array_type shape)
   }
 }
 
-int output_pov_writer(FILE * pov_file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
-{
-  if (shape.centerline == TRUE)
+int output_pov_writer(FILE *pov_file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data) {
+  if (shape.centerline == true)
     FATAL("Povray output currently not supported for centerline method");
 
   out_splines(pov_file, shape);

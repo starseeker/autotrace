@@ -31,7 +31,6 @@
 #include "datetime.h"
 #include <string.h>
 #include <math.h>
-#include <glib.h>
 
 /* Output macros.  */
 
@@ -44,7 +43,7 @@
   fprintf (epd_file, __VA_ARGS__)
 
 /* These macros just output their arguments.  */
-#define OUT_REAL(r)	fprintf (epd_file, r == (lround (r = lround((gfloat)6.0*r)/(gfloat)6.0))				\
+#define OUT_REAL(r)  fprintf (epd_file, r == (lround (r = lround((float)6.0*r)/(float)6.0))        \
                                   ? "%.0f " : "%.3f ", r)
 
 /* For a PostScript command with two real arguments, e.g., lineto.  OP
@@ -78,17 +77,16 @@
 /* This should be called before the others in this file.  It opens the
    output file `OUTPUT_NAME.ps', and writes some preliminary boilerplate. */
 
-static int output_epd_header(FILE * epd_file, gchar * name, int llx, int lly, int urx, int ury)
-{
-  gchar *time;
+static int output_epd_header(FILE *epd_file, char *name, int llx, int lly, int urx, int ury) {
+  char *time;
 
   OUT_LINE("%EPD-1.0");
-  OUT("%% Created by %s\n", at_version(TRUE));
+  OUT("%% Created by %s\n", at_version(true));
   OUT("%% Title: %s\n", name);
   OUT("%% CreationDate: %s\n", time = at_time_string());
   OUT("%%BBox(%d,%d,%d,%d)\n", llx, lly, urx, ury);
 
-  g_free(time);
+  free(time);
 
   return 0;
 }
@@ -132,7 +130,8 @@ static void out_splines(FILE * epd_file, spline_list_array_type shape)
     OUT_LINE((shape.centerline || list.open) ? "S" : "f");
 }
 
-int output_epd_writer(FILE * epd_file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_epd_writer(FILE *epd_file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   int result;
 

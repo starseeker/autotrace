@@ -35,9 +35,11 @@
 
 /* #define OUTPUT_PSTOEDIT_DEBUG */
 
-static int output_pstoedit_writer(FILE * file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, at_spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data);
+static int output_pstoedit_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                                  at_spline_list_array_type shape, at_msg_func msg_func, void *msg_data,
+                                  void *user_data);
 
-static gboolean unusable_writer_p(const gchar * name);
+static bool unusable_writer_p(const char *name);
 
 static FILE *make_temporary_file(char *template, char *mode);
 
@@ -48,12 +50,14 @@ static FILE *make_temporary_file(char *template, char *mode);
    shape -> bo file(tmpfile_name_p2e)
    -> specified formatted file(tmpfile_name_pstoedit)
    -> file */
-static int output_pstoedit_writer(FILE * file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, at_spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+static int output_pstoedit_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                                  at_spline_list_array_type shape, at_msg_func msg_func, void *msg_data,
+                                  void *user_data)
 {
   at_spline_writer *p2e_writer = NULL;
   char tmpfile_name_p2e[] = "/tmp/at-bo-XXXXXX";
   char tmpfile_name_pstoedit[] = "/tmp/at-fo-XXXXXX";
-  const gchar *symbolicname = (const gchar *)user_data;
+  const char *symbolicname = (const char *) user_data;
   FILE *tmpfile;
   int result = 0;
   int c;
@@ -112,7 +116,7 @@ remove_tmp_p2e:
   return result;
 }
 
-gboolean unusable_writer_p(const gchar * suffix)
+bool unusable_writer_p(const char *suffix)
 {
   if (0 == strcmp(suffix, "sam")
       || 0 == strcmp(suffix, "dbg")
@@ -124,9 +128,9 @@ gboolean unusable_writer_p(const gchar * suffix)
       || 0 == strcmp(suffix, "debug")
       || 0 == strcmp(suffix, "dump")
       || 0 == strcmp(suffix, "ps2as"))
-    return TRUE;
+    return true;
   else
-    return FALSE;
+    return false;
 }
 
 /* make_temporary_file --- Make a temporary file */

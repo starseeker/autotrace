@@ -20,10 +20,11 @@
 
 #undef N_
 #include "intl.h"
+#include "output.h"
+
 #ifdef ENABLE_NLS
 #include <locale.h>
 #endif
-#include <glib.h>
 
 /* Pointers to functions based on input format.  (-input-format)  */
 static at_bitmap_reader *input_reader = NULL;
@@ -41,16 +42,17 @@ static char *output_name = (char *)"";
 static at_spline_writer *output_writer = NULL;
 
 /* Whether to print version information */
-static gboolean printed_version;
+static bool printed_version;
 
 /* Whether to dump a bitmap file */
-static gboolean dumping_bitmap = FALSE;
+static bool dumping_bitmap = false;
 
 /* Report tracing status in real time (--report-progress) */
-static gboolean report_progress = FALSE;
+static bool report_progress = false;
 #define dot_printer_max_column 50
 #define dot_printer_char '|'
-static void dot_printer(gfloat percentage, gpointer client_data);
+
+static void dot_printer(float percentage, void *client_data);
 
 static char *read_command_line(int, char *[], at_fitting_opts_type *, at_input_opts_type *, at_output_opts_type *);
 
@@ -59,7 +61,7 @@ static void dump(at_bitmap * bitmap, FILE * fp);
 static void input_list_formats(FILE * file);
 static void output_list_formats(FILE * file);
 
-static void exception_handler(const gchar * msg, at_msg_type type, gpointer data);
+static void exception_handler(const char *msg, at_msg_type type, void *data);
 
 #define DEFAULT_FORMAT "eps"
 
@@ -282,7 +284,7 @@ static char *read_command_line(int argc, char *argv[], at_fitting_opts_type * fi
   {0, 0, 0, 0}
   };
 
-  while (TRUE) {
+  while (true) {
 
     g = getopt_long_only(argc, argv, "", long_options, &option_index);
 
@@ -298,7 +300,7 @@ static char *read_command_line(int argc, char *argv[], at_fitting_opts_type * fi
       fitting_opts->background_color = at_color_parse(optarg, NULL);
       input_opts->background_color = at_color_copy(fitting_opts->background_color);
     } else if (ARGUMENT_IS("centerline"))
-      fitting_opts->centerline = TRUE;
+      fitting_opts->centerline = true;
 
     else if (ARGUMENT_IS("charcode")) {
       fitting_opts->charcode = strtoul(optarg, 0, 0);
@@ -309,13 +311,13 @@ static char *read_command_line(int argc, char *argv[], at_fitting_opts_type * fi
       fitting_opts->color_count = atou(optarg);
 
     else if (ARGUMENT_IS("corner-always-threshold"))
-      fitting_opts->corner_always_threshold = (gfloat) atof(optarg);
+      fitting_opts->corner_always_threshold = (float) atof(optarg);
 
     else if (ARGUMENT_IS("corner-surround"))
       fitting_opts->corner_surround = atou(optarg);
 
     else if (ARGUMENT_IS("corner-threshold"))
-      fitting_opts->corner_threshold = (gfloat) atof(optarg);
+      fitting_opts->corner_threshold = (float) atof(optarg);
 
     else if (ARGUMENT_IS("debug-arch")) {
       int endian = 1;
@@ -333,27 +335,23 @@ static char *read_command_line(int argc, char *argv[], at_fitting_opts_type * fi
       fitting_opts->despeckle_level = atou(optarg);
 
     else if (ARGUMENT_IS("despeckle-tightness"))
-      fitting_opts->despeckle_tightness = (gfloat) atof(optarg);
+      fitting_opts->despeckle_tightness = (float) atof(optarg);
 
     else if (ARGUMENT_IS("noise-removal"))
-      fitting_opts->noise_removal = (gfloat) atof(optarg);
+      fitting_opts->noise_removal = (float) atof(optarg);
 
     else if (ARGUMENT_IS("dpi"))
       output_opts->dpi = atou(optarg);
 
     else if (ARGUMENT_IS("error-threshold"))
-      fitting_opts->error_threshold = (gfloat) atof(optarg);
+      fitting_opts->error_threshold = (float) atof(optarg);
 
     else if (ARGUMENT_IS("filter-iterations"))
       fitting_opts->filter_iterations = atou(optarg);
 
     else if (ARGUMENT_IS("help")) {
-      char *ishortlist, *oshortlist;
       fprintf(stderr, _("Usage: %s [options] <input_file_name>.\n"), argv[0]);
       fprintf(stderr, USAGE1);
-      fprintf(stderr, USAGE2, ishortlist = at_input_shortlist(), oshortlist = at_output_shortlist());
-      free(ishortlist);
-      free(oshortlist);
       fprintf(stderr, _("\nYou can get the source code of autotrace from \n%s\n"), at_home_site());
       exit(0);
     }
@@ -365,10 +363,10 @@ static char *read_command_line(int argc, char *argv[], at_fitting_opts_type * fi
     }
 
     else if (ARGUMENT_IS("line-threshold"))
-      fitting_opts->line_threshold = (gfloat) atof(optarg);
+      fitting_opts->line_threshold = (float) atof(optarg);
 
     else if (ARGUMENT_IS("line-reversion-threshold"))
-      fitting_opts->line_reversion_threshold = (gfloat) atof(optarg);
+      fitting_opts->line_reversion_threshold = (float) atof(optarg);
 
     else if (ARGUMENT_IS("list-output-formats")) {
       fprintf(stderr, _("Supported output formats:\n"));
@@ -388,19 +386,19 @@ static char *read_command_line(int argc, char *argv[], at_fitting_opts_type * fi
       if (output_writer == NULL)
         FATAL(_("Output format %s is not supported"), optarg);
     } else if (ARGUMENT_IS("preserve_width"))
-      fitting_opts->preserve_width = TRUE;
+      fitting_opts->preserve_width = true;
 
     else if (ARGUMENT_IS("remove-adjacent-corners"))
-      fitting_opts->remove_adjacent_corners = TRUE;
+      fitting_opts->remove_adjacent_corners = true;
 
     else if (ARGUMENT_IS("tangent-surround"))
       fitting_opts->tangent_surround = atou(optarg);
 
     else if (ARGUMENT_IS("version"))
-      printf(_("AutoTrace version %s.\n"), at_version(FALSE));
+      printf(_("AutoTrace version %s.\n"), at_version(false));
 
     else if (ARGUMENT_IS("width-weight-factor"))
-      fitting_opts->width_weight_factor = (gfloat) atof(optarg);
+      fitting_opts->width_weight_factor = (float) atof(optarg);
 
     /* Else it was just a flag; getopt has already done the assignment.  */
   }
@@ -424,39 +422,15 @@ static char *get_basename(char *name)
 /* Convert hex char to integer */
 static void input_list_formats(FILE * file)
 {
-  const char **list = at_input_list_new();
-  const char **tmp;
-
-  const char *suffix;
-  const char *descr;
-  tmp = list;
-  while (*list) {
-    suffix = *list++;
-    descr = *list++;
-    fprintf(file, "%5s %s\n", suffix, descr);
-  }
-
-  at_input_list_free(tmp);
+  printInputFormatInfo(file);
 }
 
 static void output_list_formats(FILE * file)
 {
-  const char **list = at_output_list_new();
-  const char **tmp;
-
-  const char *suffix;
-  const char *descr;
-  tmp = list;
-  while (*list) {
-    suffix = *list++;
-    descr = *list++;
-    fprintf(file, "%10s %s\n", suffix, descr);
-  }
-
-  at_output_list_free(tmp);
+  printOutputFormatInfo(file);
 }
 
-static void dot_printer(gfloat percentage, gpointer client_data)
+static void dot_printer(float percentage, void *client_data)
 {
   int *current = (int *)client_data;
   float unit = (float)1.0 / (float)(dot_printer_max_column);
@@ -480,7 +454,7 @@ static void dump(at_bitmap * bitmap, FILE * fp)
   fwrite(AT_BITMAP_BITS(bitmap), sizeof(unsigned char), width * height * np, fp);
 }
 
-static void exception_handler(const gchar * msg, at_msg_type type, gpointer data)
+static void exception_handler(const char *msg, at_msg_type type, void *data)
 {
   if (type == AT_MSG_FATAL) {
     fprintf(stderr, "%s\n", msg);

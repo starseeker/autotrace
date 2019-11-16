@@ -40,6 +40,7 @@
 #include "quantize.h"
 #include "thin-image.h"
 #include "despeckle.h"
+#include "glibReplacement.h"
 
 #include <locale.h>
 #include <time.h>
@@ -120,14 +121,14 @@ void at_output_opts_free(at_output_opts_type * opts)
   free(opts);
 }
 
-at_bitmap *at_bitmap_read(at_bitmap_reader * reader, gchar * filename, at_input_opts_type * opts, at_msg_func msg_func, gpointer msg_data)
-{
-  gboolean new_opts = FALSE;
+at_bitmap *at_bitmap_read(at_bitmap_reader *reader, char *filename, at_input_opts_type *opts, at_msg_func msg_func,
+                          void *msg_data) {
+  bool new_opts = false;
   at_bitmap *bitmap;
   XMALLOC(bitmap, sizeof(at_bitmap));
   if (opts == NULL) {
     opts = at_input_opts_new();
-    new_opts = TRUE;
+    new_opts = true;
   }
   *bitmap = (*reader->func) (filename, opts, msg_func, msg_data, reader->data);
   if (new_opts)
@@ -212,12 +213,12 @@ void at_bitmap_get_color(const at_bitmap * bitmap, unsigned int row, unsigned in
     at_color_set(color, p[0], p[0], p[0]);
 }
 
-gboolean at_bitmap_equal_color(const at_bitmap * bitmap, unsigned int row, unsigned int col, at_color * color)
+bool at_bitmap_equal_color(const at_bitmap *bitmap, unsigned int row, unsigned int col, at_color *color)
 {
   at_color c;
 
-  g_return_val_if_fail(bitmap, FALSE);
-  g_return_val_if_fail(color, FALSE);
+  g_return_val_if_fail(bitmap, false);
+  g_return_val_if_fail(color, false);
 
   at_bitmap_get_color(bitmap, row, col, &c);
   return at_color_equal(&c, color);
@@ -230,7 +231,10 @@ at_splines_type *at_splines_new(at_bitmap * bitmap, at_fitting_opts_type * opts,
 
 /* at_splines_new_full modify its argument: BITMAP
    when despeckle, quantize and/or thin_image are invoked. */
-at_splines_type *at_splines_new_full(at_bitmap * bitmap, at_fitting_opts_type * opts, at_msg_func msg_func, gpointer msg_data, at_progress_func notify_progress, gpointer progress_data, at_testcancel_func test_cancel, gpointer testcancel_data)
+at_splines_type *
+at_splines_new_full(at_bitmap *bitmap, at_fitting_opts_type *opts, at_msg_func msg_func, void *msg_data,
+                    at_progress_func notify_progress, void *progress_data, at_testcancel_func test_cancel,
+                    void *testcancel_data)
 {
   image_header_type image_header;
   at_splines_type *splines = NULL;
@@ -268,7 +272,7 @@ at_splines_type *at_splines_new_full(at_bitmap * bitmap, at_fitting_opts_type * 
   if (opts->centerline) {
     if (opts->preserve_width) {
       /* Preserve line width prior to thinning. */
-      dist_map = new_distance_map(bitmap, 255, /*padded= */ TRUE, &exp);
+      dist_map = new_distance_map(bitmap, 255, /*padded= */ true, &exp);
       dist = &dist_map;
       FATAL_THEN_RETURN();
     }
@@ -318,9 +322,9 @@ cleanup_dist:
 
 }
 
-void at_splines_write(at_spline_writer * writer, FILE * writeto, gchar * file_name, at_output_opts_type * opts, at_splines_type * splines, at_msg_func msg_func, gpointer msg_data)
-{
-  gboolean new_opts = FALSE;
+void at_splines_write(at_spline_writer *writer, FILE *writeto, char *file_name, at_output_opts_type *opts,
+                      at_splines_type *splines, at_msg_func msg_func, void *msg_data) {
+  bool new_opts = false;
   int llx, lly, urx, ury;
   llx = 0;
   lly = 0;
@@ -331,12 +335,12 @@ void at_splines_write(at_spline_writer * writer, FILE * writeto, gchar * file_na
     file_name = "";
 
   if (opts == NULL) {
-    new_opts = TRUE;
+    new_opts = true;
     opts = at_output_opts_new();
   }
 
   setlocale(LC_NUMERIC, "C");
-  (*writer->func) (writeto, file_name, llx, lly, urx, ury, opts, *splines, msg_func, msg_data, writer->data);
+  (*writer->func)(writeto, file_name, llx, lly, urx, ury, opts, *splines, msg_func, msg_data, NULL);
   if (new_opts)
     at_output_opts_free(opts);
 }
@@ -349,12 +353,12 @@ void at_splines_free(at_splines_type * splines)
   free(splines);
 }
 
-const char *at_version(gboolean long_format)
+const char *at_version(bool long_format)
 {
   if (long_format)
     return "AutoTrace version " AUTOTRACE_VERSION;
-
-  return AUTOTRACE_VERSION;
+  else
+    return AUTOTRACE_VERSION;
 }
 
 const char *at_home_site(void)
@@ -383,4 +387,22 @@ void autotrace_init(void)
 const char *at_fitting_opts_doc_func(char *string)
 {
   return _(string);
+}
+
+char *at_time_string(void) {
+  char *time_string;
+  time_t t;
+  char *debug;
+
+  debug = getenv("AT_DATE_ZERO");
+  if (debug && !strcmp(debug, "yes"))
+    t = (time_t) 0;
+  else
+    t = time(0);
+
+  time_string = malloc(26);  /* not 25 ! */
+  ctime_r(&t, time_string);     /* _r: reentrant */
+  time_string[24] = 0;          /* No newline. */
+
+  return time_string;
 }

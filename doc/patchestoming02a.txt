@@ -2498,7 +2498,7 @@ However, it is not included official source tree yet.
   {
 !   SWFDisplayList list = calloc(1, SWFDISPLAYLIST_SIZE);
   
-    list->isSprite = FALSE;
+    list->isSprite = false;
     list->head = NULL;
 --- 56,62 ----
   
@@ -2506,7 +2506,7 @@ However, it is not included official source tree yet.
   {
 !   SWFDisplayList list = (SWFDisplayList) calloc(1, SWFDISPLAYLIST_SIZE);
   
-    list->isSprite = FALSE;
+    list->isSprite = false;
     list->head = NULL;
 ***************
 *** 68,74 ****
@@ -2515,7 +2515,7 @@ However, it is not included official source tree yet.
   {
 !   SWFDisplayList list = calloc(1, SWFDISPLAYLIST_SIZE);
   
-    list->isSprite = TRUE;
+    list->isSprite = true;
     list->head = NULL;
 --- 68,74 ----
   
@@ -2523,7 +2523,7 @@ However, it is not included official source tree yet.
   {
 !   SWFDisplayList list = (SWFDisplayList) calloc(1, SWFDISPLAYLIST_SIZE);
   
-    list->isSprite = TRUE;
+    list->isSprite = true;
     list->head = NULL;
 ***************
 *** 80,86 ****
@@ -2553,7 +2553,7 @@ However, it is not included official source tree yet.
   
 --- 1,5 ----
   
-! #include "mingint.h"
+! #include "minint.h"
   
   extern int SWF_gNumCharacters;
   
@@ -2606,7 +2606,7 @@ However, it is not included official source tree yet.
   #include <math.h>
   #include "movie.h"
   #include "shape_util.h"
-! #include "mingint.h"
+! #include "minint.h"
   
   static void destroySWFExports(SWFMovie movie)
   {

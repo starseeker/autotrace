@@ -63,7 +63,8 @@ static short ToS(unsigned char *);
 static int ReadColorMap(FILE *, unsigned char[256][3], int, int, int *, at_exception_type *);
 static unsigned char *ReadImage(FILE *, int, int, unsigned char[256][3], int, int, int, int);
 
-at_bitmap input_bmp_reader(gchar * filename, at_input_opts_type * opts, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+at_bitmap
+input_bmp_reader(char *filename, at_input_opts_type *opts, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   FILE *fd;
   unsigned char buffer[64];

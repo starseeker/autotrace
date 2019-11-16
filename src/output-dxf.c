@@ -43,7 +43,7 @@
 #define OUT(s, ...)							\
   fprintf (dxf_file, s, __VA_ARGS__)
 
-#define color_check FALSE
+#define color_check false
 
 /**************************************************************************************
 Definitions for spline to line transformation
@@ -765,7 +765,8 @@ void output_layer(FILE * dxf_file, spline_list_array_type shape)
 /******************************************************************************
 * DXF output function.
 */
-int output_dxf12_writer(FILE * dxf_file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_dxf12_writer(FILE *dxf_file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                        spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   OUT_LINE("  0");
   OUT_LINE("SECTION");

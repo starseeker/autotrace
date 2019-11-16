@@ -5,7 +5,6 @@
 
 #include "autotrace.h"
 #include "types.h"
-#include <glib.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,19 +18,16 @@ extern "C" {
   struct _at_exception_type {
     at_msg_type msg_type;
     at_msg_func client_func;
-    gpointer client_data;
+    void *client_data;
   };
 
-  at_exception_type at_exception_new(at_msg_func client_func, gpointer client_data);
-  gboolean at_exception_got_fatal(at_exception_type * exception);
-  void at_exception_fatal(at_exception_type * exception, const gchar * message);
-  void at_exception_warning(at_exception_type * exception, const gchar * message);
+at_exception_type at_exception_new(at_msg_func client_func, void *client_data);
 
-#define AT_ERROR at_error_quark()
-  GQuark at_error_quark(void);
-  typedef enum {
-    AT_ERROR_WRONG_COLOR_STRING,
-  } AtError;
+bool at_exception_got_fatal(at_exception_type *exception);
+
+void at_exception_fatal(at_exception_type *exception, const char *message);
+
+void at_exception_warning(at_exception_type *exception, const char *message);
 
 #ifdef __cplusplus
 }

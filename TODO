@@ -41,5 +41,5 @@ Misc:
 - Better documentations(working)
 - Predefined parameter system(discussed as aop file, 0.32.0)
 - Better progress reporter, integrating to Image preprocessor
-- using GError
+- using struct GError
 

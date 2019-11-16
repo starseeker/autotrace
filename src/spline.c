@@ -28,11 +28,11 @@ void print_spline(spline_type s)
    of de Casteljau's algorithm.  See Schneider's thesis, p.37.
    The variable names are taken from there.  */
 
-at_real_coord evaluate_spline(spline_type s, gfloat t)
+at_real_coord evaluate_spline(spline_type s, float t)
 {
   spline_type V[4];             /* We need degree+1 splines, but assert degree <= 3.  */
   signed i, j;
-  gfloat one_minus_t = (gfloat) 1.0 - t;
+  float one_minus_t = (float) 1.0 - t;
   polynomial_degree degree = SPLINE_DEGREE(s);
 
   for (i = 0; i <= degree; i++) {

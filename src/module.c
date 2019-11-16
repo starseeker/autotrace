@@ -94,10 +94,10 @@ static int install_input_readers(void)
   at_input_add_handler("TGA", "Truevision Targa image", input_tga_reader);
   at_input_add_handler("BMP", "Microsoft Windows bitmap image", input_bmp_reader);
 
-  at_input_add_handler_full("PBM", "Portable bitmap format", input_pnm_reader, 0, "PBM", NULL);
-  at_input_add_handler_full("PNM", "Portable anymap format", input_pnm_reader, 0, "PNM", NULL);
-  at_input_add_handler_full("PGM", "Portable graymap format", input_pnm_reader, 0, "PGM", NULL);
-  at_input_add_handler_full("PPM", "Portable pixmap format", input_pnm_reader, 0, "PPM", NULL);
+  at_input_add_handler_full("PBM", "Portable bitmap format", input_pnm_reader);
+  at_input_add_handler_full("PNM", "Portable anymap format", input_pnm_reader);
+  at_input_add_handler_full("PGM", "Portable graymap format", input_pnm_reader);
+  at_input_add_handler_full("PPM", "Portable pixmap format", input_pnm_reader);
 
   at_input_add_handler("GF", "TeX raster font", input_gf_reader);
 

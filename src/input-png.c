@@ -39,7 +39,7 @@ static png_bytep *read_png(png_structp png_ptr, png_infop info_ptr, at_input_opt
 #	define png_jmpbuf(png_ptr) (png_ptr)->jmpbuf
 #endif
 
-static void handle_warning(png_structp png, const gchar * message)
+static void handle_warning(png_structp png, const char *message)
 {
   LOG("PNG warning: %s", message);
   at_exception_warning((at_exception_type *) png_get_error_ptr(png), message);
@@ -47,7 +47,7 @@ static void handle_warning(png_structp png, const gchar * message)
      "PNG warning"); */
 }
 
-static void handle_error(png_structp png, const gchar * message)
+static void handle_error(png_structp png, const char *message)
 {
   LOG("PNG error: %s", message);
   at_exception_fatal((at_exception_type *) png_get_error_ptr(png), message);
@@ -121,7 +121,8 @@ cleanup:
   return result;
 }
 
-at_bitmap input_png_reader(gchar * filename, at_input_opts_type * opts, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+at_bitmap
+input_png_reader(char *filename, at_input_opts_type *opts, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   FILE *stream;
   at_bitmap image = at_bitmap_init(0, 0, 0, 1);
@@ -138,4 +139,61 @@ at_bitmap input_png_reader(gchar * filename, at_input_opts_type * opts, at_msg_f
   fclose(stream);
 
   return image;
+}
+
+static png_bytep *
+read_png(png_structp png_ptr, png_infop info_ptr, at_input_opts_type * opts)
+{
+	int row;
+	png_color_16p original_bg;
+	png_color_16  my_bg;
+
+	png_read_info(png_ptr, info_ptr);
+
+	png_set_strip_16(png_ptr);
+	png_set_packing(png_ptr);
+  if ((png_get_bit_depth(png_ptr, info_ptr) < 8) ||
+      (png_get_color_type(png_ptr, info_ptr) == PNG_COLOR_TYPE_PALETTE) ||
+      (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)))
+		png_set_expand(png_ptr);
+
+	if (png_get_bKGD(png_ptr, info_ptr, &original_bg)) {
+		/* Fill transparent region with ... */
+		my_bg.index = 0;
+
+		if (opts && opts->background_color) {
+			my_bg.red   = 256 * opts->background_color->r;
+			my_bg.green = 256 * opts->background_color->g;
+			my_bg.blue  = 256 * opts->background_color->b;
+			my_bg.gray  = 256* ((opts->background_color->r
+					     + opts->background_color->g
+					     + opts->background_color->b) / 3);
+		} else {
+      /* else, use white */
+      my_bg.red = my_bg.green = my_bg.blue = my_bg.gray = 0xFFFF;
+    }
+
+		png_set_background(png_ptr, &my_bg,
+				   PNG_BACKGROUND_GAMMA_FILE, 1, 1.0);
+	} else {
+    png_set_strip_alpha(png_ptr);
+	}
+	png_read_update_info(png_ptr, info_ptr);
+
+
+#ifdef PNG_FREE_ME_SUPPORTED
+	info_ptr->free_me |= PNG_FREE_ROWS;
+#endif
+
+  png_bytepp rows = png_malloc(png_ptr, (png_get_image_height(png_ptr, info_ptr) * sizeof(png_bytep)));
+
+  for (row = 0; row < (int) png_get_image_height(png_ptr, info_ptr); row++)
+    rows[row] = (png_bytep) png_malloc(png_ptr,
+								    png_get_rowbytes(png_ptr, info_ptr));
+
+  png_set_rows(png_ptr, info_ptr, rows);
+
+  png_read_image(png_ptr, rows);
+	png_read_end(png_ptr, info_ptr);
+	return png_get_rows(png_ptr, info_ptr);
 }

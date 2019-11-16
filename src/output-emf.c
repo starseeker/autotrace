@@ -63,7 +63,7 @@
 #define WDEVMLMTR 320
 #define HDEVMLMTR 240
 
-#define SCALE (gfloat) 1.0
+#define SCALE (float) 1.0
 
 #define MAKE_COLREF(r,g,b) (((r) & 0x0FF) | (((g) & 0x0FF) << 8) | (((b) & 0x0FF) << 16))
 #define MK_PEN(n) ((n) * 2 + 1)
@@ -146,7 +146,7 @@ static int ColorLookUp(uint32_t colref, uint32_t * table, int len)
 
 /* endianess independent IO functions */
 
-static gboolean write32(FILE * fdes, uint32_t data)
+static bool write32(FILE *fdes, uint32_t data)
 {
   size_t count = 0;
   uint8_t outch;
@@ -163,10 +163,10 @@ static gboolean write32(FILE * fdes, uint32_t data)
   outch = (uint8_t) ((data >> 24) & 0x0FF);
   count += fwrite(&outch, 1, 1, fdes);
 
-  return (count == sizeof(uint32_t)) ? TRUE : FALSE;
+  return (count == sizeof(uint32_t)) ? true : false;
 }
 
-static gboolean write16(FILE * fdes, uint16_t data)
+static bool write16(FILE *fdes, uint16_t data)
 {
   size_t count = 0;
   uint8_t outch;
@@ -177,7 +177,7 @@ static gboolean write16(FILE * fdes, uint16_t data)
   outch = (uint8_t) ((data >> 8) & 0x0FF);
   count += fwrite(&outch, 1, 1, fdes);
 
-  return (count == sizeof(uint16_t)) ? TRUE : FALSE;
+  return (count == sizeof(uint16_t)) ? true : false;
 }
 
 /* EMF record-type function definitions */
@@ -470,11 +470,11 @@ static int WriteEndOfMetafile(FILE * fdes)
   return recsize;
 }
 
-static int WriteHeader(FILE * fdes, gchar * name, int width, int height, int fsize, int nrec, int nhand)
+static int WriteHeader(FILE *fdes, char *name, int width, int height, int fsize, int nrec, int nhand)
 {
   int i, recsize;
   size_t desclen;
-  const char *editor = at_version(TRUE);
+  const char *editor = at_version(true);
 
   desclen = (strlen(editor) + strlen(name) + 3);
   recsize = sizeof(uint32_t) * 25 + (desclen * 2) + ((desclen * 2) % 4);
@@ -543,7 +543,7 @@ static int WriteHeader(FILE * fdes, gchar * name, int width, int height, int fsi
         is deselected from the Metafile device context. This avoids resource depletion
 */
 /*
-static void GetEmfStats(EMFStats *stats, gchar* name, spline_list_array_type shape)
+static void GetEmfStats(EMFStats *stats, char* name, spline_list_array_type shape)
 {
   unsigned int i, j;
   int ncolors = 0;
@@ -637,7 +637,7 @@ static void GetEmfStats(EMFStats *stats, gchar* name, spline_list_array_type sha
   ColorListToColorTable(&color_list, &color_table, ncolors);
 }
 
-static void OutputEmf(FILE* fdes, EMFStats *stats, gchar* name, int width, int height, spline_list_array_type shape)
+static void OutputEmf(FILE* fdes, EMFStats *stats, char* name, int width, int height, spline_list_array_type shape)
 {
   unsigned int i, j;
   int color_index;
@@ -752,7 +752,7 @@ static void OutputEmf(FILE* fdes, EMFStats *stats, gchar* name, int width, int h
 
 */
 
-static void GetEmfStats(EMFStats * stats, gchar * name, spline_list_array_type shape)
+static void GetEmfStats(EMFStats *stats, char *name, spline_list_array_type shape)
 {
   unsigned int this_list, this_spline;
   int ncolors = 0;
@@ -869,7 +869,7 @@ static void GetEmfStats(EMFStats * stats, gchar * name, spline_list_array_type s
 
 //EMF output
 
-static void OutputEmf(FILE * fdes, EMFStats * stats, gchar * name, int width, int height, spline_list_array_type shape)
+static void OutputEmf(FILE *fdes, EMFStats *stats, char *name, int width, int height, spline_list_array_type shape)
 {
   unsigned int this_list, this_spline;
   int color_index, last_index;
@@ -973,7 +973,8 @@ static void OutputEmf(FILE * fdes, EMFStats * stats, gchar * name, int width, in
   free((void *)color_table);
 }
 
-int output_emf_writer(FILE * file, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data)
+int output_emf_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
 {
   EMFStats stats;
 

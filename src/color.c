@@ -25,23 +25,28 @@
 #include "intl.h"
 #include "color.h"
 #include "exception.h"
+#include "glibReplacement.h"
 
 #include <string.h>
 #include <stdlib.h>
 
+/* TODO:
+   Use gmemcache */
+
+static unsigned int hctoi(char c, struct GError **err);
+
 at_color *at_color_new(unsigned char r, unsigned char g, unsigned char b)
 {
   at_color *color;
-  color = g_new(at_color, 1);
+  color = malloc(sizeof(at_color));
   color->r = r;
   color->g = g;
   color->b = b;
   return color;
 }
 
-at_color *at_color_parse(const gchar * string, GError ** err)
-{
-  GError *local_err = NULL;
+at_color *at_color_parse(const char *string, struct GError **err) {
+  struct GError *local_err = NULL;
   unsigned char c[6];
   int i;
 
@@ -50,21 +55,16 @@ at_color *at_color_parse(const gchar * string, GError ** err)
   else if (string[0] == '\0')
     return NULL;
   else if (strlen(string) != 6) {
-    g_set_error(err, AT_ERROR, AT_ERROR_WRONG_COLOR_STRING, _("color string is too short: %s"), string);
+    printf("color string is too short: %s", string);
     return NULL;
   }
 
   for (i = 0; i < 6; i++) {
-    char ch = string[i];
-    if (ch >= '0' && ch <= '9')
-      c[i] = ch - '0';
-    else if (ch >= 'A' && ch <= 'F')
-      c[i] = ch - 'A' + 10;
-    else if (ch >= 'a' && ch <= 'f')
-      c[i] = ch - 'a' + 10;
-    else {
-      g_set_error(&local_err, AT_ERROR, AT_ERROR_WRONG_COLOR_STRING, _("wrong char in color string: %c"), string[i]);
-      g_propagate_error(err, local_err);
+    c[i] = hctoi(string[i], &local_err);
+    if (local_err != NULL) {
+      if (err != NULL) {
+        *err = local_err;
+      }
       return NULL;
     }
   }
@@ -75,16 +75,15 @@ at_color *at_color_copy(const at_color * original)
 {
   if (original == NULL)
     return NULL;
-
   return at_color_new(original->r, original->g, original->b);
 }
 
-gboolean at_color_equal(const at_color * c1, const at_color * c2)
+bool at_color_equal(const at_color *c1, const at_color *c2)
 {
   if (c1 == c2 || ((c1->r == c2->r) && (c1->g == c2->g) && (c1->b == c2->b)))
-    return TRUE;
-
-  return FALSE;
+    return true;
+  else
+    return false;
 }
 
 void at_color_set(at_color * c, unsigned char r, unsigned char g, unsigned char b)
@@ -102,13 +101,57 @@ unsigned char at_color_luminance(const at_color * color)
 
 void at_color_free(at_color * color)
 {
-  g_free(color);
+  free(color);
 }
 
-GType at_color_get_type(void)
+static unsigned int hctoi(char c, struct GError **err)
 {
-  static GType our_type = 0;
-  if (our_type == 0)
-    our_type = g_boxed_type_register_static("AtColor", (GBoxedCopyFunc) at_color_copy, (GBoxedFreeFunc) at_color_free);
-  return our_type;
+  if (c == '0')
+    return (0);
+  else if (c == '1')
+    return (1);
+  else if (c == '2')
+    return (2);
+  else if (c == '3')
+    return (3);
+  else if (c == '4')
+    return (4);
+  else if (c == '5')
+    return (5);
+  else if (c == '6')
+    return (6);
+  else if (c == '7')
+    return (7);
+  else if (c == '8')
+    return (8);
+  else if (c == '9')
+    return (9);
+  else if (c == 'a')
+    return (10);
+  else if (c == 'A')
+    return (10);
+  else if (c == 'b')
+    return (11);
+  else if (c == 'B')
+    return (11);
+  else if (c == 'c')
+    return (12);
+  else if (c == 'C')
+    return (12);
+  else if (c == 'd')
+    return (13);
+  else if (c == 'D')
+    return (13);
+  else if (c == 'e')
+    return (14);
+  else if (c == 'E')
+    return (14);
+  else if (c == 'f')
+    return (15);
+  else if (c == 'F')
+    return (15);
+  else {
+    printf("wrong char in color string: %c", c);
+    return (unsigned int)-1;
+  }
 }

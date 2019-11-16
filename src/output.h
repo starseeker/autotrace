@@ -23,18 +23,19 @@
 #include "autotrace.h"
 #include "types.h"
 #include "exception.h"
-#include <glib.h>
+#include "callbacks.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif                          /* __cplusplus */
 
   typedef
-  int (*at_output_func) (FILE *, gchar * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, at_splines_type shape, at_msg_func msg_func, gpointer msg_data, gpointer user_data);
+  int (*at_output_func)(FILE *, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
+                        at_splines_type shape, at_msg_func msg_func, void *msg_data, void *user_data);
 
-  extern int at_output_add_handler(const gchar * suffix, const gchar * description, at_output_func writer);
+extern int at_output_add_handler(const char *suffix, const char *description, at_output_func writer);
 
-  extern int at_output_add_handler_full(const gchar * suffix, const gchar * description, at_output_func writer, gboolean override, gpointer user_data, GDestroyNotify user_data_destroy_func);
+extern void printOutputFormatInfo(FILE *file);
 
 /* Data struct hierarchy:
    spline_list_array (splines)
@@ -57,11 +58,11 @@ extern "C" {
 #define AT_SPLINE_LIST_LENGTH_VALUE(spll)     ((spll).length)
 #define AT_SPLINE_LIST_LENGTH(spll)           AT_SPLINE_LIST_LENGTH_VALUE(*(spll))
 #define AT_SPLINE_LIST_DATA_VALUE(spll)       ((spll).data)
-#define AT_SPLINE_LIST_DATA(spll)             AT_SPLINE_LIST_DATA_VALUE((*spll))
+#define AT_SPLINE_LIST_DATA(spll)             AT_SPLINE_LIST_DATA_VALUE((*(spll)))
 #define AT_SPLINE_LIST_ELT_VALUE(spll,index)  AT_SPLINE_LIST_DATA_VALUE(spll)[(index)]
-#define AT_SPLINE_LIST_ELT(spll,index)        (&(AT_SPLINE_LIST_ELT_VALUE((*spll), (index))))
+#define AT_SPLINE_LIST_ELT(spll, index)        (&(AT_SPLINE_LIST_ELT_VALUE((*(spll)), (index))))
 #define AT_SPLINE_LIST_COLOR_VALUE(spll)      ((spll).color)
-#define AT_SPLINE_LIST_COLOR(spll)            (&(AT_SPLINE_LIST_COLOR_VALUE(*spll)))
+#define AT_SPLINE_LIST_COLOR(spll)            (&(AT_SPLINE_LIST_COLOR_VALUE(*(spll))))
 #define AT_SPLINE_LIST_IS_OPENED_VALUE(spll)  ((spll).open)
 #define AT_SPLINE_LIST_IS_OPENED(spll)        AT_SPLINE_LIST_IS_OPENED_VALUE(*(spll))
 
@@ -77,11 +78,15 @@ extern "C" {
  * Glib style traversing
  */
 
-  typedef void (*AtSplineListForeachFunc) (at_spline_list_type * spline_list, at_spline_type * spline, int index, gpointer user_data);
-  typedef void (*AtSplineListArrayForeachFunc) (at_spline_list_array_type * spline_list_array, at_spline_list_type * spline_list, int index, gpointer user_data);
+typedef void (*AtSplineListForeachFunc)(at_spline_list_type *spline_list, at_spline_type *spline, int index,
+                                        void *user_data);
 
-  void at_spline_list_foreach(at_spline_list_type *, AtSplineListForeachFunc func, gpointer user_data);
-  void at_spline_list_array_foreach(at_spline_list_array_type *, AtSplineListArrayForeachFunc func, gpointer user_data);
+typedef void (*AtSplineListArrayForeachFunc)(at_spline_list_array_type *spline_list_array,
+                                             at_spline_list_type *spline_list, int index, void *user_data);
+
+void at_spline_list_foreach(at_spline_list_type *, AtSplineListForeachFunc func, void *user_data);
+
+void at_spline_list_array_foreach(at_spline_list_array_type *, AtSplineListArrayForeachFunc func, void *user_data);
 
 #ifdef __cplusplus
 }

@@ -7,7 +7,7 @@
 #include "logreport.h"
 #include "atou.h"
 
-unsigned atou(gchar * s)
+unsigned atou(char *s)
 {
   int i = atoi(s);
 
