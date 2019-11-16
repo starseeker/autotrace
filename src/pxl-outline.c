@@ -219,7 +219,7 @@ bool is_valid_dir(unsigned short row, unsigned short col, direction_type dir, at
   at_color c;
 
   if ((COMPUTE_DELTA(ROW, dir) + row < 0) || (COMPUTE_DELTA(COL, dir) + col < 0))
-	return FALSE;	// Must not call at_bitmap_get_color() with negative row or col.
+	return false;	// Must not call at_bitmap_get_color() with negative row or col.
 
   at_bitmap_get_color(bitmap, COMPUTE_DELTA(ROW, dir) + row, COMPUTE_DELTA(COL, dir) + col, &c);
   return ((bool) (!is_marked_dir(row, col, dir, marked)

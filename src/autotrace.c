@@ -224,7 +224,7 @@ bool at_bitmap_equal_color(const at_bitmap *bitmap, unsigned int row, unsigned i
   return at_color_equal(&c, color);
 }
 
-at_splines_type *at_splines_new(at_bitmap * bitmap, at_fitting_opts_type * opts, at_msg_func msg_func, gpointer msg_data)
+at_splines_type *at_splines_new(at_bitmap * bitmap, at_fitting_opts_type * opts, at_msg_func msg_func, void *msg_data)
 {
   return at_splines_new_full(bitmap, opts, msg_func, msg_data, NULL, NULL, NULL, NULL);
 }
@@ -376,8 +376,6 @@ void autotrace_init(void)
 #endif /* Def: ENABLE_NLS */
 
     /* Initialize subsystems */
-    at_input_init();
-    at_output_init();
     at_module_init();
 
     initialized = 1;

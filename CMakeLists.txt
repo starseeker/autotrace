@@ -30,7 +30,6 @@ add_library(autotraceLib
         src/logreport.c
         src/filename.c
         src/exception.c
-        src/strgicmp.c
         src/image-proc.c
         src/module.c
         src/input-pnm.c
@@ -85,10 +84,11 @@ target_compile_definitions(autotraceLib
 
 add_subdirectory(Vendor)
 
-add_subdirectory(src/wrapper)
-if (BUILD_TESTS)
-    add_subdirectory(src/test_wrapper)
-endif ()
+
+#add_subdirectory(src/wrapper)
+#if (BUILD_TESTS)
+#    add_subdirectory(src/test_wrapper)
+#endif ()
 
 if (EMSCRIPTEN)
     target_compile_options(autotraceLib PUBLIC -s USE_LIBPNG=1)
@@ -105,7 +105,6 @@ else ()
             src/atou.h
             src/main.c
             src/cmdline.h
-            src/strgicmp.h
             )
     target_link_libraries(autotrace PRIVATE autotraceLib m)
 endif ()

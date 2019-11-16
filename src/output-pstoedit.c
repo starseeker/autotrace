@@ -158,9 +158,9 @@ int install_output_pstoedit_writers(void)
         continue;
       }
       if (!at_output_get_handler_by_suffix(dd_tmp->suffix))
-        at_output_add_handler_full(dd_tmp->suffix, dd_tmp->explanation, output_pstoedit_writer, 0, g_strdup(dd_tmp->symbolicname), g_free);
+        at_output_add_handler_full(dd_tmp->suffix, dd_tmp->explanation, output_pstoedit_writer, 0, strdup(dd_tmp->symbolicname), free);
       if (!at_output_get_handler_by_suffix(dd_tmp->symbolicname))
-        at_output_add_handler_full(dd_tmp->symbolicname, dd_tmp->explanation, output_pstoedit_writer, 0, g_strdup(dd_tmp->symbolicname), g_free);
+        at_output_add_handler_full(dd_tmp->symbolicname, dd_tmp->explanation, output_pstoedit_writer, 0, strdup(dd_tmp->symbolicname), free);
       dd_tmp++;
     }
   }
