@@ -1,4 +1,4 @@
-![](https://github.com/starseeker/autotrace/workflows/btest.yml/badge.svg)
+![](https://github.com/starseeker/autotrace/.github/workflows/btest.yml/badge.svg)
 
 This fork is currently being used to collect changes from a couple repositories
 and try a bit of cleanup - much of the documentation won't apply.  Problems
