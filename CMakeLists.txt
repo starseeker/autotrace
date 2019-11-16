@@ -79,8 +79,6 @@ target_compile_definitions(libautotrace
   AUTOTRACE_WEB="http://autotrace.sourceforge.net"
   )
 
-add_subdirectory(Vendor)
-
 target_link_libraries(libautotrace PUBLIC
   PNG::PNG
   ${ImageMagick_LIBRARIES})
