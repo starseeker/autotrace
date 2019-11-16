@@ -81,9 +81,6 @@ target_compile_definitions(libautotrace
 
 add_subdirectory(Vendor)
 
-enable_testing()
-#add_subdirectory(tests)
-
 target_link_libraries(libautotrace PUBLIC
   PNG::PNG
   ${ImageMagick_LIBRARIES})
@@ -98,6 +95,9 @@ add_executable(autotrace
   src/cmdline.h
   )
 target_link_libraries(autotrace PRIVATE libautotrace m)
+
+enable_testing()
+add_subdirectory(tests)
 
 # Local Variables:
 # tab-width: 8
