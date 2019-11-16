@@ -9,8 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-      with:
-        submodules: recursive
+    - uses: textbook/git-checkout-submodule-action@2.0.0
     - name: configure
       run: mkdir build && cd build && cmake ..
     - name: build
@@ -27,8 +26,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-      with:
-        submodules: recursive
+    - uses: textbook/git-checkout-submodule-action@2.0.0
     - name: configure
       run: mkdir build && cd build && cmake ..
     - name: build
