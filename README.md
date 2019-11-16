@@ -1,5 +1,6 @@
-[![Build Status](https://travis-ci.org/autotrace/autotrace.svg?branch=future)](https://travis-ci.org/autotrace/autotrace)
-
+This fork is currently being used to collect changes from a couple repositories
+and try a bit of cleanup - much of the documentation won't apply.  Problems
+here shouldn't be blamed on upstream.
 
 AutoTrace
 =========
@@ -49,6 +50,13 @@ export to the p2e format. This format can be converted by
 installed the latest pstoedit (3.32 or newer), autotrace uses pstoedit
 directly. However, direct pstoedit support is not stable enough. 
 See INSTALL file for more detail.
+
+
+Building
+--------
+libmagickcore-dev autopoint diffutils libpng-dev libexif-dev libtiff5-dev libjpeg-dev libxml2-dev libbz2-dev libpstoedit-dev libmagickcore-dev libfreetype6-dev
+
+Installer/cross platform? fakeroot checkinstall mingw-w64 binutils-mingw-w64 binutils-mingw-w64-x86-64 mingw-w64-tools nsis
 
 Installation
 ------------
