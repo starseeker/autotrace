@@ -53,8 +53,9 @@ static int output_pstoedit_writer(FILE * file, char * name, int llx, int lly, in
   at_spline_writer *p2e_writer = NULL;
   char tmpfile_name_p2e[] = "/tmp/at-bo-XXXXXX";
   char tmpfile_name_pstoedit[] = "/tmp/at-fo-XXXXXX";
-  const char *symbolicname = (const char *)user_data;
-  FILE *tmpfile;
+  const char *symbolicname = (const gchar *)user_data;
+  FILE *tmpfile_p2e;
+  FILE *tmpfile_pstoedit;
   int result = 0;
   int c;
 
@@ -69,8 +70,8 @@ static int output_pstoedit_writer(FILE * file, char * name, int llx, int lly, in
 
   argc = sizeof(argv) / sizeof(char *);
 
-  tmpfile = make_temporary_file(tmpfile_name_p2e, "w");
-  if (NULL == tmpfile) {
+  tmpfile_p2e = make_temporary_file(tmpfile_name_p2e, "w");
+  if (NULL == tmpfile_p2e) {
     result = -1;
     goto remove_tmp_p2e;
   }
@@ -79,12 +80,10 @@ static int output_pstoedit_writer(FILE * file, char * name, int llx, int lly, in
    * shape -> bo file
    */
   p2e_writer = at_output_get_handler_by_suffix("p2e");
-  at_splines_write(p2e_writer, tmpfile, tmpfile_name_p2e, opts, &shape, msg_func, msg_data);
+  at_splines_write(p2e_writer, tmpfile_p2e, tmpfile_name_p2e, opts, &shape, msg_func, msg_data);
 
-  fclose(tmpfile);
-
-  tmpfile = make_temporary_file(tmpfile_name_pstoedit, "r");
-  if (NULL == tmpfile) {
+  tmpfile_pstoedit = make_temporary_file(tmpfile_name_pstoedit, "r");
+  if (NULL == tmpfile_pstoedit) {
     result = -1;
     goto remove_tmp_pstoedit;
   }
@@ -96,14 +95,15 @@ static int output_pstoedit_writer(FILE * file, char * name, int llx, int lly, in
   argv[INPUT_INDEX] = tmpfile_name_p2e;
   argv[OUTPUT_INDEX] = tmpfile_name_pstoedit;
   pstoedit_plainC(argc, argv, NULL);
+  fclose(tmpfile_p2e);
 
   /*
    * specified formatted file(tmpfile_name_pstoedit) -> file
    */
-  /* fseek(tmpfile, 0, SEEK_SET); */
-  while (EOF != (c = fgetc(tmpfile)))
+  fseek(tmpfile_pstoedit, 0, SEEK_SET);
+  while (EOF != (c = fgetc(tmpfile_pstoedit)))
     fputc(c, file);
-  fclose(tmpfile);
+  fclose(tmpfile_pstoedit);
 
 remove_tmp_pstoedit:
   remove(tmpfile_name_pstoedit);
