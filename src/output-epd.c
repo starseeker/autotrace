@@ -43,7 +43,7 @@
   fprintf (epd_file, __VA_ARGS__)
 
 /* These macros just output their arguments.  */
-#define OUT_REAL(r)  fprintf (epd_file, r == (lround (r = lround((float)6.0*r)/(float)6.0))        \
+#define OUT_REAL(r)	fprintf (epd_file, r == lround(r)		\
                                   ? "%.0f " : "%.3f ", r)
 
 /* For a PostScript command with two real arguments, e.g., lineto.  OP
