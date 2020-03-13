@@ -17,17 +17,17 @@ TEST(InputOptionsTests, CorrectDefault) {
   InputOptions inputOptions;
 
   EXPECT_EQ(0, inputOptions.charcode);
-  EXPECT_TRUE(inputOptions.background_color != nullptr);
+  EXPECT_true(inputOptions.background_color != nullptr);
 }
 
 TEST(InputOptionsTests, FromJson) {
   const auto inputOptionJson = R"({"charcode": 13, "background_color": {"red": 128,"green": 129,"blue": 130}})";
   std::string jsonError;
   InputOptions inputOptions{Json::parse(inputOptionJson, jsonError, STANDARD)};
-  EXPECT_TRUE(jsonError.empty());
+  EXPECT_true(jsonError.empty());
 
   EXPECT_EQ(13, inputOptions.charcode);
-  ASSERT_TRUE(inputOptions.background_color != nullptr);
+  ASSERT_true(inputOptions.background_color != nullptr);
   EXPECT_EQ(128, static_cast<uint16_t>(inputOptions.background_color->r));
   EXPECT_EQ(129, static_cast<uint16_t>(inputOptions.background_color->g));
   EXPECT_EQ(130, static_cast<uint16_t>(inputOptions.background_color->b));
@@ -40,27 +40,27 @@ TEST(InputOptionsTests, ToJson) {
     .build();
 
   const auto inputOptionsJson = inputOptions.toJson();
-  EXPECT_TRUE(inputOptionsJson.is_object());
+  EXPECT_true(inputOptionsJson.is_object());
   const auto &objectItems = inputOptionsJson.object_items();
 
   const auto maybeCharcode = JsonHelper::getNumber(objectItems, "charcode");
-  EXPECT_TRUE(maybeCharcode);
+  EXPECT_true(maybeCharcode);
   EXPECT_EQ(15, *maybeCharcode);
 
   const auto maybeBackground = JsonHelper::getObject(objectItems, "background_color");
-  EXPECT_TRUE(maybeBackground);
+  EXPECT_true(maybeBackground);
   const auto background = *maybeBackground;
 
   const auto maybeRed = JsonHelper::getNumber(background, "red");
-  EXPECT_TRUE(maybeRed);
+  EXPECT_true(maybeRed);
   EXPECT_EQ(20, *maybeRed);
 
   const auto maybeGreen = JsonHelper::getNumber(background, "green");
-  EXPECT_TRUE(maybeGreen);
+  EXPECT_true(maybeGreen);
   EXPECT_EQ(21, *maybeGreen);
 
   const auto maybeBlue = JsonHelper::getNumber(background, "blue");
-  EXPECT_TRUE(maybeBlue);
+  EXPECT_true(maybeBlue);
   EXPECT_EQ(22, *maybeBlue);
 }
 

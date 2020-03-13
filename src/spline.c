@@ -147,7 +147,6 @@ void free_spline_list_array(spline_list_array_type * spline_list_array)
   for (this_list = 0; this_list < SPLINE_LIST_ARRAY_LENGTH(*spline_list_array); this_list++)
     free_spline_list(SPLINE_LIST_ARRAY_ELT(*spline_list_array, this_list));
 
-  free(SPLINE_LIST_ARRAY_DATA(*spline_list_array));
 }
 
 /* Append the spline S to the list SPLINE_LIST_ARRAY.  */

@@ -34,17 +34,27 @@
 static void out_splines(SWFMovie m, spline_list_array_type shape, int height)
 {
   unsigned this_list;
+  spline_list_type list;
+
   at_color last_color = { 0, 0, 0 };
+  
+  SWFShape k = newSWFShape();
 
   for (this_list = 0; this_list < SPLINE_LIST_ARRAY_LENGTH(shape); this_list++) {
     SWFShape k;
 
     unsigned this_spline;
-    spline_list_type list = SPLINE_LIST_ARRAY_ELT(shape, this_list);
-    spline_type first = SPLINE_LIST_ELT(list, 0);
+    spline_type first;
+    
+    list = SPLINE_LIST_ARRAY_ELT(shape, this_list);
+    first = SPLINE_LIST_ELT(list, 0);
 
     if (this_list == 0 || !at_color_equal(&list.color, &last_color)) {
-      k = newSWFShape();
+        if (this_list > 0)
+          {
+              SWFMovie_add(m, (SWFBlock)k); //(SWFBlock)k needed for higher versions
+              k = newSWFShape();
+          }
       SWFShape_setRightFill(k, SWFShape_addSolidFill(k, list.color.r, list.color.g, list.color.b, 0xff));
       last_color = list.color;
     }
@@ -59,12 +69,12 @@ static void out_splines(SWFMovie m, spline_list_array_type shape, int height)
         SWFShape_drawCubicTo(k, SWFSCALE * CONTROL1(s).x, SWFSCALE * height - SWFSCALE * CONTROL1(s).y, SWFSCALE * CONTROL2(s).x, SWFSCALE * height - SWFSCALE * CONTROL2(s).y, SWFSCALE * END_POINT(s).x, SWFSCALE * height - SWFSCALE * END_POINT(s).y);
       }
     }
-    SWFMovie_add(m, k);
+    if (SPLINE_LIST_ARRAY_LENGTH(shape) > 0)
+        SWFMovie_add(m, k);
   }
 }
 
-int output_swf_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
-                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
+int output_swf_writer(FILE * file, char * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, void * msg_data, void * user_data)
 {
   int width = urx - llx;
   int height = ury - lly;

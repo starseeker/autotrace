@@ -35,11 +35,9 @@
 
 /* #define OUTPUT_PSTOEDIT_DEBUG */
 
-static int output_pstoedit_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
-                                  at_spline_list_array_type shape, at_msg_func msg_func, void *msg_data,
-                                  void *user_data);
+static int output_pstoedit_writer(FILE * file, char * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, at_spline_list_array_type shape, at_msg_func msg_func, void * msg_data, void * user_data);
 
-static bool unusable_writer_p(const char *name);
+static bool unusable_writer_p(const char * name);
 
 static FILE *make_temporary_file(char *template, char *mode);
 
@@ -50,14 +48,12 @@ static FILE *make_temporary_file(char *template, char *mode);
    shape -> bo file(tmpfile_name_p2e)
    -> specified formatted file(tmpfile_name_pstoedit)
    -> file */
-static int output_pstoedit_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
-                                  at_spline_list_array_type shape, at_msg_func msg_func, void *msg_data,
-                                  void *user_data)
+static int output_pstoedit_writer(FILE * file, char * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, at_spline_list_array_type shape, at_msg_func msg_func, void * msg_data, void * user_data)
 {
   at_spline_writer *p2e_writer = NULL;
   char tmpfile_name_p2e[] = "/tmp/at-bo-XXXXXX";
   char tmpfile_name_pstoedit[] = "/tmp/at-fo-XXXXXX";
-  const char *symbolicname = (const char *) user_data;
+  const char *symbolicname = (const char *)user_data;
   FILE *tmpfile;
   int result = 0;
   int c;
@@ -116,7 +112,7 @@ remove_tmp_p2e:
   return result;
 }
 
-bool unusable_writer_p(const char *suffix)
+bool unusable_writer_p(const char * suffix)
 {
   if (0 == strcmp(suffix, "sam")
       || 0 == strcmp(suffix, "dbg")
@@ -158,9 +154,9 @@ int install_output_pstoedit_writers(void)
         continue;
       }
       if (!at_output_get_handler_by_suffix(dd_tmp->suffix))
-        at_output_add_handler_full(dd_tmp->suffix, dd_tmp->explanation, output_pstoedit_writer, 0, strdup(dd_tmp->symbolicname), free);
+        at_output_add_handler_full(dd_tmp->suffix, dd_tmp->explanation, output_pstoedit_writer, 0, g_strdup(dd_tmp->symbolicname), g_free);
       if (!at_output_get_handler_by_suffix(dd_tmp->symbolicname))
-        at_output_add_handler_full(dd_tmp->symbolicname, dd_tmp->explanation, output_pstoedit_writer, 0, strdup(dd_tmp->symbolicname), free);
+        at_output_add_handler_full(dd_tmp->symbolicname, dd_tmp->explanation, output_pstoedit_writer, 0, g_strdup(dd_tmp->symbolicname), g_free);
       dd_tmp++;
     }
   }

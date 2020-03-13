@@ -21,7 +21,7 @@ TEST(OutputOptionsTests, FromJson) {
   const auto outputOptionJson = "{ \"dpi\" : 13 }";
   std::string jsonError;
   OutputOptions outputOptions{Json::parse(outputOptionJson, jsonError, STANDARD)};
-  EXPECT_TRUE(jsonError.empty());
+  EXPECT_true(jsonError.empty());
 
   EXPECT_EQ(13, outputOptions.dpi);
 }
@@ -34,11 +34,11 @@ TEST(OutputOptionsTests, ToJson) {
       .build();
 
     const auto outOptionsJson = outputOptions.toJson();
-    EXPECT_TRUE(outOptionsJson.is_object());
+    EXPECT_true(outOptionsJson.is_object());
     const auto &objectItems = outOptionsJson.object_items();
     const auto &dpiItem = objectItems.find("dpi");
-    EXPECT_TRUE(dpiItem != objectItems.end());
-    EXPECT_TRUE(dpiItem->second.is_number());
+    EXPECT_true(dpiItem != objectItems.end());
+    EXPECT_true(dpiItem->second.is_number());
     EXPECT_EQ(dpiValue, dpiItem->second.number_value());
   };
 

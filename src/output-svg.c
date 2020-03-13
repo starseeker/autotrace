@@ -22,6 +22,8 @@
 #endif /* Def: HAVE_CONFIG_H */
 
 #include "spline.h"
+#include "color.h"
+#include "output-svg.h"
 
 static void out_splines(FILE * file, spline_list_array_type shape, int height)
 {
@@ -62,13 +64,14 @@ static void out_splines(FILE * file, spline_list_array_type shape, int height)
     fputs("\"/>\n", file);
 }
 
-int output_svg_writer(FILE *file, char *name, int llx, int lly, int urx, int ury, at_output_opts_type *opts,
-                      spline_list_array_type shape, at_msg_func msg_func, void *msg_data, void *user_data)
+int output_svg_writer(FILE * file, char * name, int llx, int lly, int urx, int ury, at_output_opts_type * opts, spline_list_array_type shape, at_msg_func msg_func, void * msg_data, void * user_data)
 {
   int width = urx - llx;
   int height = ury - lly;
   fputs("<?xml version=\"1.0\" standalone=\"yes\"?>\n", file);
-  fprintf(file, "<svg viewBox=\"0 0 %d %d\" width=\"%d\" height=\"%d\">\n", width, height, width, height);
+  fputs("<svg xmlns=\"http://www.w3.org/2000/svg\"\n", file);
+  fputs("xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n", file);
+  fprintf(file, "width=\"%d\" height=\"%d\">\n", width, height);
 
   out_splines(file, shape, height);
   fputs("</svg>\n", file);

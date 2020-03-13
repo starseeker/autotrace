@@ -21,7 +21,6 @@
 #undef N_
 #include "intl.h"
 #include "output.h"
-
 #ifdef ENABLE_NLS
 #include <locale.h>
 #endif
@@ -51,7 +50,6 @@ static bool dumping_bitmap = false;
 static bool report_progress = false;
 #define dot_printer_max_column 50
 #define dot_printer_char '|'
-
 static void dot_printer(float percentage, void *client_data);
 
 static char *read_command_line(int, char *[], at_fitting_opts_type *, at_input_opts_type *, at_output_opts_type *);
@@ -61,8 +59,21 @@ static void dump(at_bitmap * bitmap, FILE * fp);
 static void input_list_formats(FILE * file);
 static void output_list_formats(FILE * file);
 
-static void exception_handler(const char *msg, at_msg_type type, void *data);
+static void exception_handler(const char * msg, at_msg_type type, void * data);
 
+static char* itoa(int val, int base) {
+
+	static char buf[32] = { 0 };
+
+	int i = 30;
+
+	for (; val && i; --i, val /= base)
+
+		buf[i] = "0123456789abcdef"[val % base];
+
+	return &buf[i + 1];
+
+}
 #define DEFAULT_FORMAT "eps"
 
 int main(int argc, char *argv[])
@@ -233,6 +244,7 @@ output-format <format>: use format <format> for the output file\n\
   %s can be used.\n\
 preserve-width: whether to preserve line width prior to thinning.\n\
 remove-adjacent-corners: remove corners that are adjacent.\n\
+remove-knees: remove knees that are found.\n\
 tangent-surround <unsigned>: number of points on either side of a\n\
   point to consider when computing the tangent at that point; default is 3.\n\
 report-progress: report tracing status in real time.\n\
@@ -277,6 +289,7 @@ static char *read_command_line(int argc, char *argv[], at_fitting_opts_type * fi
   {"preserve-width", 0, 0, 0},
   {"range", 1, 0, 0},
   {"remove-adjacent-corners", 0, 0, 0},
+  {"remove-knees",    0, 0, 0 },
   {"tangent-surround", 1, 0, 0},
   {"report-progress", 0, (int *)&report_progress, 1},
   {"version", 0, (int *)&printed_version, 1},
@@ -350,8 +363,12 @@ static char *read_command_line(int argc, char *argv[], at_fitting_opts_type * fi
       fitting_opts->filter_iterations = atou(optarg);
 
     else if (ARGUMENT_IS("help")) {
+      char *ishortlist, *oshortlist;
       fprintf(stderr, _("Usage: %s [options] <input_file_name>.\n"), argv[0]);
       fprintf(stderr, USAGE1);
+      /*fprintf(stderr, USAGE2, ishortlist = at_input_shortlist(), oshortlist = at_output_shortlist());*/
+      free(ishortlist);
+      free(oshortlist);
       fprintf(stderr, _("\nYou can get the source code of autotrace from \n%s\n"), at_home_site());
       exit(0);
     }
@@ -390,6 +407,9 @@ static char *read_command_line(int argc, char *argv[], at_fitting_opts_type * fi
 
     else if (ARGUMENT_IS("remove-adjacent-corners"))
       fitting_opts->remove_adjacent_corners = true;
+    
+    else if (ARGUMENT_IS("remove-knees"))
+      fitting_opts->remove_knees = true;
 
     else if (ARGUMENT_IS("tangent-surround"))
       fitting_opts->tangent_surround = atou(optarg);
@@ -430,7 +450,7 @@ static void output_list_formats(FILE * file)
   printOutputFormatInfo(file);
 }
 
-static void dot_printer(float percentage, void *client_data)
+static void dot_printer(float percentage, void * client_data)
 {
   int *current = (int *)client_data;
   float unit = (float)1.0 / (float)(dot_printer_max_column);
@@ -454,7 +474,7 @@ static void dump(at_bitmap * bitmap, FILE * fp)
   fwrite(AT_BITMAP_BITS(bitmap), sizeof(unsigned char), width * height * np, fp);
 }
 
-static void exception_handler(const char *msg, at_msg_type type, void *data)
+static void exception_handler(const char * msg, at_msg_type type, void * data)
 {
   if (type == AT_MSG_FATAL) {
     fprintf(stderr, "%s\n", msg);

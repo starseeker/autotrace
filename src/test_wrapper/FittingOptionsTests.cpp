@@ -17,7 +17,7 @@ TEST(FittingOptionsTests, CorrectDefault) {
   FittingOptions fittingOptions;
 
   EXPECT_EQ(0, fittingOptions.charcode);
-  EXPECT_TRUE(fittingOptions.background_color != nullptr);
+  EXPECT_true(fittingOptions.background_color != nullptr);
   EXPECT_EQ(0, fittingOptions.color_count);
   EXPECT_EQ(60.0f, fittingOptions.corner_always_threshold);
   EXPECT_EQ(4, fittingOptions.corner_surround);
@@ -64,11 +64,11 @@ TEST(FittingOptionsTests, FromJson) {
 
   std::string jsonError;
   FittingOptions fittingOptions{Json::parse(fittingOptionJson, jsonError, STANDARD)};
-  EXPECT_TRUE(jsonError.empty());
+  EXPECT_true(jsonError.empty());
 
   EXPECT_EQ(13, fittingOptions.charcode);
 
-  ASSERT_TRUE(fittingOptions.background_color != nullptr);
+  ASSERT_true(fittingOptions.background_color != nullptr);
   EXPECT_EQ(128, static_cast<uint16_t>(fittingOptions.background_color->r));
   EXPECT_EQ(129, static_cast<uint16_t>(fittingOptions.background_color->g));
   EXPECT_EQ(130, static_cast<uint16_t>(fittingOptions.background_color->b));
@@ -115,91 +115,91 @@ TEST(FittingOptionsTests, ToJson) {
     .build();
 
   const auto inputOptionsJson = fittingOptions.toJson();
-  EXPECT_TRUE(inputOptionsJson.is_object());
+  EXPECT_true(inputOptionsJson.is_object());
   const auto &objectItems = inputOptionsJson.object_items();
 
   const auto maybeCharcode = JsonHelper::getNumber(objectItems, "charcode");
-  EXPECT_TRUE(maybeCharcode);
+  EXPECT_true(maybeCharcode);
   EXPECT_EQ(15, *maybeCharcode);
 
   const auto maybeBackground = JsonHelper::getObject(objectItems, "background_color");
-  EXPECT_TRUE(maybeBackground);
+  EXPECT_true(maybeBackground);
   const auto background = *maybeBackground;
 
   const auto maybeRed = JsonHelper::getNumber(background, "red");
-  EXPECT_TRUE(maybeRed);
+  EXPECT_true(maybeRed);
   EXPECT_EQ(20, *maybeRed);
 
   const auto maybeGreen = JsonHelper::getNumber(background, "green");
-  EXPECT_TRUE(maybeGreen);
+  EXPECT_true(maybeGreen);
   EXPECT_EQ(21, *maybeGreen);
 
   const auto maybeBlue = JsonHelper::getNumber(background, "blue");
-  EXPECT_TRUE(maybeBlue);
+  EXPECT_true(maybeBlue);
   EXPECT_EQ(22, *maybeBlue);
 
   const auto maybeColorCount = JsonHelper::getNumber(objectItems, "color_count");
-  EXPECT_TRUE(maybeColorCount);
+  EXPECT_true(maybeColorCount);
   EXPECT_EQ(28, *maybeColorCount);
 
   const auto maybeCornerAlwaysThreshold = JsonHelper::getDecimal(objectItems, "corner_always_threshold");
-  EXPECT_TRUE(maybeCornerAlwaysThreshold);
+  EXPECT_true(maybeCornerAlwaysThreshold);
   EXPECT_EQ(160.0f, *maybeCornerAlwaysThreshold);
 
   const auto maybeCornerSurround = JsonHelper::getNumber(objectItems, "corner_surround");
-  EXPECT_TRUE(maybeCornerSurround);
+  EXPECT_true(maybeCornerSurround);
   EXPECT_EQ(8, *maybeCornerSurround);
 
   const auto maybeCornerThreshold = JsonHelper::getDecimal(objectItems, "corner_threshold");
-  EXPECT_TRUE(maybeCornerThreshold);
+  EXPECT_true(maybeCornerThreshold);
   EXPECT_EQ(90.0f, *maybeCornerThreshold);
 
   const auto maybeErrorThreshold = JsonHelper::getDecimal(objectItems, "error_threshold");
-  EXPECT_TRUE(maybeErrorThreshold);
+  EXPECT_true(maybeErrorThreshold);
   EXPECT_EQ(2.0f, *maybeErrorThreshold);
 
   const auto maybeFilterIterations = JsonHelper::getNumber(objectItems, "filter_iterations");
-  EXPECT_TRUE(maybeFilterIterations);
+  EXPECT_true(maybeFilterIterations);
   EXPECT_EQ(5, *maybeFilterIterations);
 
   const auto maybeLineReversionThreshold = JsonHelper::getDecimal(objectItems, "line_reversion_threshold");
-  EXPECT_TRUE(maybeLineReversionThreshold );
+  EXPECT_true(maybeLineReversionThreshold );
   EXPECT_EQ(3.6f, *maybeLineReversionThreshold );
 
   const auto maybeLineThreshold = JsonHelper::getDecimal(objectItems, "line_threshold");
-  EXPECT_TRUE(maybeLineThreshold);
+  EXPECT_true(maybeLineThreshold);
   EXPECT_EQ(2.2f, *maybeLineThreshold);
 
   const auto maybeRemoveAdjacentCorners = JsonHelper::getBoolean(objectItems, "remove_adjacent_corners");
-  EXPECT_TRUE(maybeRemoveAdjacentCorners);
+  EXPECT_true(maybeRemoveAdjacentCorners);
   EXPECT_EQ(true, *maybeRemoveAdjacentCorners);
 
   const auto maybeTangentSurround = JsonHelper::getNumber(objectItems, "tangent_surround");
-  EXPECT_TRUE(maybeTangentSurround);
+  EXPECT_true(maybeTangentSurround);
   EXPECT_EQ(3, *maybeTangentSurround);
 
   const auto maybeDespeckleLevel = JsonHelper::getNumber(objectItems, "despeckle_level");
-  EXPECT_TRUE(maybeDespeckleLevel);
+  EXPECT_true(maybeDespeckleLevel);
   EXPECT_EQ(8, *maybeDespeckleLevel);
 
   const auto maybeDespeckleTightness = JsonHelper::getDecimal(objectItems, "despeckle_tightness");
-  EXPECT_TRUE(maybeDespeckleTightness);
+  EXPECT_true(maybeDespeckleTightness);
   EXPECT_EQ(5.0f, *maybeDespeckleTightness);
 
   const auto maybeNoiseRemoval = JsonHelper::getDecimal(objectItems, "noise_removal");
-  EXPECT_TRUE(maybeNoiseRemoval);
+  EXPECT_true(maybeNoiseRemoval);
   EXPECT_EQ(0.9f, *maybeNoiseRemoval);
 
   const auto maybeCentreline = JsonHelper::getBoolean(objectItems, "centerline");
-  EXPECT_TRUE(maybeCentreline);
+  EXPECT_true(maybeCentreline);
   EXPECT_EQ(true, *maybeCentreline);
 
   const auto maybePreserveWidth = JsonHelper::getBoolean(objectItems, "preserve_width");
-  EXPECT_TRUE(maybePreserveWidth);
+  EXPECT_true(maybePreserveWidth);
   EXPECT_EQ(true, *maybePreserveWidth);
 
   const auto maybeWidthWeightFactor = JsonHelper::getDecimal(objectItems, "width_weight_factor");
-  EXPECT_TRUE(maybeWidthWeightFactor);
+  EXPECT_true(maybeWidthWeightFactor);
   EXPECT_EQ(6.0f, *maybeWidthWeightFactor);
 }
 
